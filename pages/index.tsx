@@ -13,6 +13,7 @@ const Home: NextPage = () => {
       const socket = io();
 
       socket.on('clientsOnline', (clients) => {
+        console.log(clients)
         setUsers( clients );
       });
 

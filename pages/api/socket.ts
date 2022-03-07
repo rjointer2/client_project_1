@@ -12,14 +12,13 @@ const ioHandler = (req, res) => {
         io.on('connection', socket => {
             socket.broadcast.emit('new user connected');
 
-            users.push(socket.id)
+            users.push({ id: socket.id, data: null })
             console.log(users);
-
             io.emit('clientsOnline', users);
 
 
             socket.on('disconnect', () => {
-                users = users.filter(( user ) => user !== socket.id)
+                users = users.filter(( user ) => user.id !== socket.id)
                 io.emit('clientsOnline', users)
                 console.log(`after disconnection: ${users}`)
             })
