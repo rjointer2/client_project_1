@@ -17,6 +17,13 @@ const Home: NextPage = () => {
         setUsers( clients );
       });
 
+      socket.on('assignClient', user => {
+        user.data = {
+          name: 'username'
+        }
+        socket.emit('assigned', user)
+      })
+
       return () => socket
     })
   }, []);

@@ -1,5 +1,13 @@
 
-import { createContext, useContext, useReducer } from "react";
+import { createContext, ReactNode, useContext, useReducer } from "react";
+
+const initialState = {
+
+}
+
+const reducer = () => {
+    return {}
+}
 
 const context = {
     state: {
@@ -10,17 +18,17 @@ const context = {
     }
 }
 
-type globalStateProvider = {
-    childern: React.ReactNode
-}
 
-const Context = createContext(context);
+export const Context = createContext(context) 
 
-export const ContextProvider = ({ childern } : globalStateProvider) => {
+export function GlobalState({ children } : { children: ReactNode }) {
+    const [ state, dispatch ] = useReducer( reducer, initialState );
 
-    const [ state, dispatch ] = useReducer(  )
-
-    return <Context.Provider value={ context }>{childern}</Context.Provider>
+    return (
+        <Context.Provider value={{state, dispatch}}>
+            {children}
+        </Context.Provider>
+    )
 }
 
 export const useGlobalState = () => {
