@@ -1,27 +1,28 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:8080');
-
 const Home: NextPage = () => {
 
-  return (
-    <div>
-      <Head>
-        <title>Next App</title>
-      </Head>
+  const [users, setUsers] = useState<Array<string>>([])
 
-      <main>
-        Hello World
-      </main>
+  useEffect(() => {
+    fetch('./api/socket').finally(() => {
+      const socket = io();
 
-      <footer>
-        I'm a footer
-      </footer>
-    </div>
-  )
+      socket.on('clientsOnline', (clients) => {
+        setUsers( clients );
+      });
+
+      return () => socket
+    })
+  }, []);
+
+  
+
+  return <div>number of clients {users.length}</div>
 }
 
 export default Home
