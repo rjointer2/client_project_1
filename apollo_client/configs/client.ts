@@ -4,7 +4,7 @@ import cache from "./cache";
 
 const http_link = createHttpLink({
     uri: process.env.NODE_ENV === 'development' ? 
-    'http://localhost:8080/graphql' : 'actual server'
+    '/graphql' : 'actual server'
 });
 
 const client = new ApolloClient({
