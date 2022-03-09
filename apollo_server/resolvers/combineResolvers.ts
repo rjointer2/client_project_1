@@ -1,15 +1,12 @@
 
+import { users, createUser } from "./userResolvers";
 
 const resolvers = {
     Query: {
-        hello: ( _: never, args: any, _context: never ) => {
-            return 'hello world'
-        }
+        users
     },
     Mutation: {
-        world: ( _: never, args: any, _context: never ) => {
-            return 'hello world'
-        }
+        createUser
     }
 }
 

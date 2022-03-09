@@ -3,13 +3,20 @@ import { gql } from "apollo-server-micro";
 
 const typeDefs = gql`
 
+    type User {
+        username: String
+        password: String
+        email: String
+        rank: Int
+    }
+
 
     type Query {
-       hello: String
+       users: [User]
     }
 
     type Mutation {
-        world: String
+        createUser ( username: String!, password: String!, email: String! ): User
     }
 
 `;

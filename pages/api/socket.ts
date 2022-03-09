@@ -17,14 +17,24 @@ const ioHandler = (req: NextApiRequest, res: any) => {
         io.on('connection', socket => {
             socket.broadcast.emit('new user connected');
 
-            users.push({ id: socket.id, data: null })
-            console.log(users);
-            console.log(users.slice(-1)[0])
+            class User {
+                id: string
+                data: null 
+                constructor ({ id, data } : { id: string, data: null }) {
+                    this.id = id;
+                    this.data = data;
+                }
+            }
+
+            users.push(new User({ id: socket.id, data: null }));
+            console.log(users)
+            io.emit('clientsOnline', users);
+
             socket.emit('assignClient', users.slice(-1)[0])
             socket.on('assigned', user => {
                 console.log(user)
             })
-            io.emit('clientsOnline', users);
+
 
            
 
