@@ -1,10 +1,16 @@
+import { useQuery } from '@apollo/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 import io from 'socket.io-client';
+import { USERS } from '../apollo_client/querys/users';
 
 const Home: NextPage = () => {
+
+  const { data, error } = useQuery(USERS)
+
+  console.log(`showing data...`,  data ? data : error )
 
   const [users, setUsers] = useState<Array<string>>([])
 

@@ -9,6 +9,8 @@ import Cors from 'micro-cors';
 import { ServerResponse } from "http";
 import { MicroRequest } from "apollo-server-micro/dist/types";
 
+import { connectDb } from "../../apollo_server/connectDB";
+
 const cors = Cors();
 
 const server = new ApolloServer({
@@ -18,19 +20,23 @@ const server = new ApolloServer({
 
 const startServer = server.start();
 
-export default cors(async function ( req: MicroRequest, res: ServerResponse ) {
-    
+export default cors(async function( req: MicroRequest, res: ServerResponse ) {
 
     if( req.method === 'OPTIONS' ) {
         res.end();
-        return false
     }
+
+    connectDb()
 
     await startServer;
     await server.createHandler({ 
         path: '/api/graphql'
-    })( req, res )
+    })( req, res );
+
+
+
 });
+
 
 export const config = {
     api: {
