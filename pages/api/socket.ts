@@ -15,10 +15,85 @@ const ioHandler = (req: NextApiRequest, res: any) => {
         let users: Array<data> = [];
 
         io.on('connection', socket => {
-           socket.on('control', e => {
+
+            socket.on('object', obj => {
+                
+                const controller = {
+
+                    left: false,
+                    right: false,
+                    up: false,
+                    keyListener: function (event: any) {
+                        // state of the key
+          
+                        let key_state = (event.type == "keydown") ? true : false;
+                        console.log(event.keyCode)
+          
+                        switch(event.keyCode) {
+          
+                            case 37: // left key
+                            controller.left = key_state;
+                            break;
+                            case 38: // up key
+                            controller.up = key_state;
+                            break;
+                            case 39: // right key
+                            controller.right = key_state;
+                            break;
+          
+                        }
+                    }
+          
+                  }
+
+
+                if(controller.up && obj.rectangle.jumping == false) {
+                    obj.rectangle.y_velocity -= 20;
+                    obj.rectangle.jumping = true;
+                }
+      
+                // left controlloer input
+                if(controller.left) {
+                    obj.rectangle.x_velocity -= 0.2;
+                }
+      
+                // right controller input 
+                if(controller.right) {
+                    obj.rectangle.x_velocity += 0.2;
+                }
+      
+                // physics
+      
+                // velocity is 1.5 every frame
+                obj.rectangle.y_velocity += 0.4; // gravity of the canvas
+                obj.rectangle.x += obj.rectangle.x_velocity;
+                obj.rectangle.y += obj.rectangle.y_velocity;
+      
+                // friction -> slow gradually
+      
+                obj.rectangle.x_velocity *= 0.9;
+                obj.rectangle.y_velocity *= 0.9;
+      
+                // ground detection
+      
+                if ( obj.rectangle.y > 180 - 16 - 32 ) {
+      
+                    obj.rectangle.jumping = false;
+                    obj.rectangle.y = 180 - 16 - 32;
+      
+                    // once the obj.rectangle hits the ground, your veclocity should stop
+                    // instantly
+                    obj.rectangle.y_velocity = 0;
+      
+                }
+
+                socket.emit('assignObj', obj)
+            }) 
+
+           /* socket.on('control', e => {
                console.log(e)
                socket.emit('emitControl', e)
-           });
+           }); */
 
         });
 
