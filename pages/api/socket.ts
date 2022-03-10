@@ -15,7 +15,32 @@ const ioHandler = (req: NextApiRequest, res: any) => {
         let users: Array<data> = [];
 
         io.on('connection', socket => {
-            socket.broadcast.emit('new user connected');
+           socket.on('control', e => {
+               console.log(e)
+               socket.emit('emitControl', e)
+           });
+
+        });
+
+        res.socket.server.io = io;
+    } else {
+        console.log(`socket running already`)
+    }
+
+    res.end();
+};
+
+export const config = {
+    api: {
+        bodyParser: false
+    }
+}
+
+export default ioHandler
+
+/* 
+
+ socket.broadcast.emit('new user connected');
 
             class User {
                 id: string
@@ -45,20 +70,4 @@ const ioHandler = (req: NextApiRequest, res: any) => {
                 console.log(`after disconnection: ${users}`)
             })
 
-        });
-
-        res.socket.server.io = io;
-    } else {
-        console.log(`socket running already`)
-    }
-
-    res.end();
-};
-
-export const config = {
-    api: {
-        bodyParser: false
-    }
-}
-
-export default ioHandler
+*/
