@@ -1,6 +1,7 @@
 
 import { Server, ServerOptions, } from 'socket.io';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { currentClient } from '../../typeDef/clientTypeDefs';
 
 
 const ioHandler = (req: NextApiRequest, res: any) => {
@@ -11,89 +12,58 @@ const ioHandler = (req: NextApiRequest, res: any) => {
 
         const io = new Server(res.socket.server);
 
-        type data = {id: string, data: null }
-        let users: Array<data> = [];
+        let clients: any = {};
 
         io.on('connection', socket => {
 
-            socket.on('object', obj => {
-                
-                const controller = {
+            socket.on('newClient', ( clientData ) => {
+                console.log(`new client connected with id: ${socket.id}`);
+                clients[socket.id] = clientData;
+                console.log(clients)
 
-                    left: false,
-                    right: false,
-                    up: false,
-                    keyListener: function (event: any) {
-                        // state of the key
+                // after a new client fires the listener emit function from 
+                // client then we send back from the server the length of clients
+                io.emit('clientsConnectedToServer', clients)
+            })
+
+            socket.on('emitServerRequest', () => {
+
+                for ( let id in clients ) {
+
+                    // physics
           
-                        let key_state = (event.type == "keydown") ? true : false;
-                        console.log(event.keyCode)
+                    // velocity is 1.5 every frame
+                    clients[id].y_velocity += 0.4; // gravity of the canvas
+                    clients[id].x += clients[id].x_velocity;
+                    clients[id].y += clients[id].y_velocity;
           
-                        switch(event.keyCode) {
+                    // friction -> slow gradually
           
-                            case 37: // left key
-                            controller.left = key_state;
-                            break;
-                            case 38: // up key
-                            controller.up = key_state;
-                            break;
-                            case 39: // right key
-                            controller.right = key_state;
-                            break;
+                    clients[id].x_velocity *= 0.9;
+                    clients[id].y_velocity *= 0.9;
           
-                        }
+                    // ground detection
+          
+                    if ( clients[id].y > 180 - 16 - 32 ) {
+          
+                        clients[id].jumping = false;
+                        clients[id].y = 180 - 16 - 32;
+          
+                        // once the clients[id] hits the ground, your veclocity should stop
+                        // instantly
+                        clients[id].y_velocity = 0;
+          
                     }
-          
-                  }
-
-
-                if(controller.up && obj.rectangle.jumping == false) {
-                    obj.rectangle.y_velocity -= 20;
-                    obj.rectangle.jumping = true;
-                }
-      
-                // left controlloer input
-                if(controller.left) {
-                    obj.rectangle.x_velocity -= 0.2;
-                }
-      
-                // right controller input 
-                if(controller.right) {
-                    obj.rectangle.x_velocity += 0.2;
-                }
-      
-                // physics
-      
-                // velocity is 1.5 every frame
-                obj.rectangle.y_velocity += 0.4; // gravity of the canvas
-                obj.rectangle.x += obj.rectangle.x_velocity;
-                obj.rectangle.y += obj.rectangle.y_velocity;
-      
-                // friction -> slow gradually
-      
-                obj.rectangle.x_velocity *= 0.9;
-                obj.rectangle.y_velocity *= 0.9;
-      
-                // ground detection
-      
-                if ( obj.rectangle.y > 180 - 16 - 32 ) {
-      
-                    obj.rectangle.jumping = false;
-                    obj.rectangle.y = 180 - 16 - 32;
-      
-                    // once the obj.rectangle hits the ground, your veclocity should stop
-                    // instantly
-                    obj.rectangle.y_velocity = 0;
-      
                 }
 
-                socket.emit('assignObj', obj)
-            }) 
+                io.emit('emitServerResponse', clients)
+            })
 
-           /* socket.on('control', e => {
-               console.log(e)
-               socket.emit('emitControl', e)
-           }); */
+            socket.on('disconnect', () => {
+                delete clients[socket.id];
+                io.emit('clientsConnectedToServer', clients)
+                console.log(clients)
+            })
 
         });
 
@@ -112,37 +82,3 @@ export const config = {
 }
 
 export default ioHandler
-
-/* 
-
- socket.broadcast.emit('new user connected');
-
-            class User {
-                id: string
-                data: null 
-                constructor ({ id, data } : { id: string, data: null }) {
-                    this.id = id;
-                    this.data = data;
-                }
-            }
-
-            users.push(new User({ id: socket.id, data: null }));
-            console.log(users)
-            io.emit('clientsOnline', users);
-
-            socket.emit('assignClient', users.slice(-1)[0])
-            socket.on('assigned', user => {
-                console.log(user)
-            })
-
-
-           
-
-
-            socket.on('disconnect', () => {
-                users = users.filter(( user ) => user.id !== socket.id)
-                io.emit('clientsOnline', users)
-                console.log(`after disconnection: ${users}`)
-            })
-
-*/

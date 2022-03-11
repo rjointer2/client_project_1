@@ -5,143 +5,137 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 
 import io from 'socket.io-client';
 import { USERS } from '../apollo_client/querys/users';
+import { Rectangle } from '../typeDef/gameTypeDefs';
 
 
 const Home: NextPage = () => {
 
-  const [frame, setFrame] = useState(0)
+  const [cli, setCli] = useState(0);
+  const [clientsState, setClientsState] = useState(0)
 
+  class Rectangle {
+    height: number
+    width: number
+    jumping: boolean
+    x_velocity: number
+    x: number // on the ground
+    y_velocity: number
+    y: number
+    constructor() {
+      this.height = 32;
+      this.width = 32;
+      this.jumping = false;
+      this.x_velocity = 0;
+      this.x = 0;
+      this.y_velocity = 0;
+      this.y = 0;
+    }
+  }
+
+  let clientsStateFrsetClientsStateomServer: { [id: string]: any } = {};
 
   useLayoutEffect(() => {
-    
-      fetch('./api/socket').finally(() => {
-        const socket = io();
+    fetch('/api/socket').finally(() => {
+      const socket = io();
 
-        let context = document.querySelector("canvas")?.getContext('2d') as CanvasRenderingContext2D
+      socket.emit('newClient', new Rectangle());
+      socket.on('clientsConnectedToServer', clientsState =setClientsState> {
+        setCli(Object.keys(clientsState).setClientsStatelength)
+      });
 
-        context.canvas.height = 180;
-        context.canvas.width = 320;
+      
 
-        // define the propteries and dimesion of the rectangle
+      let context = document.querySelector("canvas")?.getContext('2d') as CanvasRenderingContext2D
 
-        let rectangle = {
-            height: 32,
-            width: 32,
-            // we have access to this prop so when it's jumping we define 
-            // flase in the air
-            jumping: true,
-            x_velocity: 0,
-            x: 144, // on the ground
-            y_velocity: 0,
-            y: 0,
-        }
+      context.canvas.height = 180;
+      context.canvas.width = 320;
 
-        // now let's merge the controller logic with the physics
+      const loop = () => {
 
-        const loop = function() {
-          // wall detection
+        socket.emit('emitServerRequest');
+        socket.on('emitServerResponse', res => {
 
-          // we have to give the canvas gray filling
+         for( let id in res ) {
           context.fillStyle = '#202020';
           // This erases the color behind and around the square, because it
           // didn't we will get a contiouns stroke
           context.fillRect(0, 0, 320, 180);
-          // This keeps the rectangle stroking the canvas
-          context.fillStyle = "#ff0000";// hex for red
+          // This keeps the player stroking the canvas
+      
+          // i don't want both to be red
+          context.fillStyle = '#ff0000';// layer color: ;
+          // makes a new square
           context.beginPath();
-          // the dimessional of the rectangle
-          context.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-          context.fill();
+          // the dimessional of the player
+          context.rect(res[id].x, res[id].y, res[id].width, res[id].height);
 
-          context.strokeStyle = "#202020";
-          context.lineWidth = 4;
-          context.beginPath();
-          context.moveTo(0, 164);
-          context.lineTo(320, 164);
-          context.stroke();
+          context.fill()
 
-          socket.emit('object', {
-            rectangle
-          });
+            // physics
+          
+              // velocity is 1.5 every frame
+              res[id].y_velocity += 0.4; // gravity of the canvas
+              res[id].x += res[id].x_velocity;
+              res[id].y += res[id].y_velocity;
+    
+              // friction -> slow gradually
+    
+              res[id].x_velocity *= 0.9;
+              res[id].y_velocity *= 0.9;
+    
+              // ground detection
+    
+              if ( res[id].y > 180 - 16 - 32 ) {
+    
+                  res[id].jumping = false;
+                  res[id].y = 180 - 16 - 32;
+    
+                  // once the res[id] hits the ground, your veclocity should stop
+                  // instantly
+                  res[id].y_velocity = 0;
+    
+              }
+         }
 
-          socket.on('assignObj', obj => {
-            rectangle = obj.rectangle
-            console.log(rectangle)
-          })
+        })
 
-          window.requestAnimationFrame(loop);
-        }
+        window.requestAnimationFrame(loop)
+      }
 
-        /* window.addEventListener('keyup', (e) => {
-            socket.emit('object', {
-              rectangle,
-              keyCode: e.keyCode,
-              type: e.type
-            })
-        }) */
+      window.requestAnimationFrame(loop)
 
-        /* window.addEventListener("keydown", (e) => {
-          socket.emit('control', { 
-            keyCode: e.keyCode,
-            type: e.type
-           })
-          socket.on('emitControl', e => {
-            controller.keyListener(e)
-          })
-        });
-        window.addEventListener("keyup", (e) => {
-          socket.emit('control', { 
-            keyCode: e.keyCode,
-            type: e.type
-           })
-          socket.on('emitControl', e => {
-            controller.keyListener(e)
-          })
-        });
-        */
-
-        window.requestAnimationFrame(loop); 
-
-      })
-
+    })
   }, [])
 
   return <div>
-    { typeof window && <canvas></canvas> }
+    {cli}<br/>
+    <canvas></canvas>
   </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 
-
-
-
-*/
 
 
 }
 
 export default Home
+
+
+/* 
+
+socket.on('clientsConnectedToServer', ( clientsState: setClientsState{ [key: string]: any } ) => {
+        console.log(clientsState)
+setClientsState        for( let id in connectedClients ) {
+          let clientsFound: { [key: string]: any } = {};
+          if( connectedClientsFromServer[id] === undefined && id !== socket.id ) {
+            connectedClientsFromServer[id] = new Rectangle();
+          }
+          clientsFound[id] = true;
+        }
+
+        for( let id in connectedClientsFromServer) {
+          if(!connectedClientsFromServer[id]) {
+            delete connectedClientsFromServer[id]
+          }
+        }
+
+        console.log(connectedClientsFromServer)
+      })
+*/
