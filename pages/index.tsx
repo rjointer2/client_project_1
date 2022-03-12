@@ -52,15 +52,24 @@ const Home: NextPage = () => {
         const loop = () => setTimeout(() => {
           socket.emit('requestToUpdateClient');
           socket.on('updateClient', ( res: ServerClientDiction ) => setClis(() => {
+
+            // produceral programming with the canvas api
+            // first clear the previous canvas image from component mount
             ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+            // change the prop to be this color
             ctx.fillStyle = '#514a83';
+            // then fill the rectangle
             ctx.fillRect(0, 0, 320, 240)
            
+            
             for( let id in res ) {
-              
+              // now producerally start a path / stroke
               ctx.beginPath();
+              // defien the shape
               ctx.rect(res[id].x, res[id].y, res[id].width, res[id].height);
+              // this is for lols
               ctx.stroke();
+              // the background and then use methd fill
               ctx.fillStyle = 'red'
               ctx.fill();
               
