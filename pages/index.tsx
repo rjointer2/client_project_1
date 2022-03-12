@@ -49,20 +49,31 @@ const Home: NextPage = () => {
         socket.emit('newClient', Rectangle({ color: '#ff0000' }));
         socket.on('currentClients', ( clientsOnline: ServerClientDiction ) => setClis(clientsOnline) )
 
+        const loop = () => setTimeout(() => {
+          socket.emit('requestToUpdateClient');
+          socket.on('updateClient', ( res: ServerClientDiction ) => setClis(() => {
+            ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+            ctx.fillStyle = '#514a83';
+            ctx.fillRect(0, 0, 320, 240)
+           
+            for( let id in res ) {
+              
+              ctx.beginPath();
+              ctx.rect(res[id].x, res[id].y, res[id].width, res[id].height);
+              ctx.stroke();
+              ctx.fillStyle = 'red'
+              ctx.fill();
+              
+            }
+            console.log(res)
+            return res
+          }))
+          loop()
+        }, 30) 
+        
+        loop()
+
       })
-
-
-      /* setArr(() => {
-        arr.forEach((ar) => {
-          ctx.beginPath();
-          // we have to give the canvas gray filling
-          ctx.rect(ar.x, ar.y, ar.width, ar.height);
-          // so blue is working now! just no input
-          ctx.fillStyle = ar.color;// layer color: ;
-          ctx.fill();
-        })
-        return arr
-      }) */
 
     }
 

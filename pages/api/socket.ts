@@ -23,6 +23,34 @@ const ioHandler = (req: NextApiRequest, res: any) => {
                 io.emit('currentClients', clients)
             });
 
+            socket.on('requestToUpdateClient', () => {
+                for(let id in clients) {
+                    // velocity is 1.5 every frame
+                    clients[id].y_velocity += 0.4; // gravity of the canvas
+                    clients[id].x += clients[id].x_velocity;
+                    clients[id].y += clients[id].y_velocity;
+                
+                    // friction -> slow gradually
+                
+                    clients[id].x_velocity *= 0.9;
+                    clients[id].y_velocity *= 0.9;
+                
+                    // ground detection
+                
+                    if ( clients[id].y > 180 - 16 - 32 ) {
+                
+                        clients[id].jumping = false;
+                        clients[id].y = 180 - 16 - 32;
+                
+                        // once the clients[id] hits the ground, your veclocity should stop
+                        // instantly
+                        clients[id].y_velocity = 0;
+                
+                    }
+                }
+                io.emit('updateClient', clients)
+            });
+
             socket.on('disconnect', () => {
                 delete clients[socket.id];
                 io.emit('currentClients', clients)
@@ -45,50 +73,3 @@ export const config = {
 }
 
 export default ioHandler
-
-
-
-/* 
-
-
-socket.on('newClient', ( newClient ) => {
-                newClient.id = socket.id
-                clients.push(newClient)
-                io.emit('currentClients', clients)
-            })
-
-            socket.on('clientReqLoop', () => {
-                clients.forEach((client) => {
-                    // velocity is 1.5 every frame
-                    client.y_velocity += 0.4; // gravity of the canvas
-                    client.x += client.x_velocity;
-                    client.y += client.y_velocity;
-          
-                    // friction -> slow gradually
-          
-                    client.x_velocity *= 0.9;
-                    client.y_velocity *= 0.9;
-          
-                    // ground detection
-          
-                    if ( client.y > 180 - 16 - 32 ) {
-          
-                        client.jumping = false;
-                        client.y = 180 - 16 - 32;
-          
-                        // once the clients[id] hits the ground, your veclocity should stop
-                        // instantly
-                        client.y_velocity = 0;
-          
-                    }
-                })
-                socket.emit('serverReq', clients)
-            });
-
-            socket.on('disconnect', () => {
-                clients = clients.filter(( client ) => client.id !== socket.id);
-                io.emit('currentClients', clients)
-            })
-
-
-*/
