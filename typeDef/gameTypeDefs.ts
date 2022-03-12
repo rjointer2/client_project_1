@@ -10,4 +10,9 @@ export type Rectangle = {
     x: number, // on the ground
     y_velocity: number,
     y: number,
+    color: string
+}
+
+export type ServerClientDiction = {
+    [key: string]: Rectangle
 }

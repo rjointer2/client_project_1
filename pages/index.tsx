@@ -1,141 +1,81 @@
 import { useQuery } from '@apollo/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import io from 'socket.io-client';
 import { USERS } from '../apollo_client/querys/users';
-import { Rectangle } from '../typeDef/gameTypeDefs';
+import { Rectangle, ServerClientDiction } from '../typeDef/gameTypeDefs';
 
 
 const Home: NextPage = () => {
 
-  const [cli, setCli] = useState(0);
-  const [clientsState, setClientsState] = useState(0)
+  const [ ctx, setCtx ] = useState<null | CanvasRenderingContext2D>(null);
+  const canvasRef = useRef<null | HTMLCanvasElement>(null);
 
-  class Rectangle {
-    height: number
-    width: number
-    jumping: boolean
-    x_velocity: number
-    x: number // on the ground
-    y_velocity: number
-    y: number
-    constructor() {
-      this.height = 32;
-      this.width = 32;
-      this.jumping = false;
-      this.x_velocity = 0;
-      this.x = 0;
-      this.y_velocity = 0;
-      this.y = 0;
+  const [ clis, setClis ] = useState<ServerClientDiction>({})
+
+
+  useEffect(() => {
+    
+    if(canvasRef.current) {
+      
+      const renderContext = canvasRef.current.getContext('2d');
+
+      if(renderContext) setCtx(() => {
+        renderContext.canvas.height = 240;
+        renderContext.canvas.width = 320;
+        renderContext.fillStyle = '#3f3a4bf4';
+        renderContext.fillRect(0, 0, renderContext.canvas.width, renderContext.canvas.width);
+        return renderContext
+      })
+
     }
-  }
 
-  let clientsStateFrsetClientsStateomServer: { [id: string]: any } = {};
-
-  useLayoutEffect(() => {
-    fetch('/api/socket').finally(() => {
-      const socket = io();
-
-      socket.emit('newClient', new Rectangle());
-      socket.on('clientsConnectedToServer', clientsState =setClientsState> {
-        setCli(Object.keys(clientsState).setClientsStatelength)
-      });
-
+    if(ctx) {
       
-
-      let context = document.querySelector("canvas")?.getContext('2d') as CanvasRenderingContext2D
-
-      context.canvas.height = 180;
-      context.canvas.width = 320;
-
-      const loop = () => {
-
-        socket.emit('emitServerRequest');
-        socket.on('emitServerResponse', res => {
-
-         for( let id in res ) {
-          context.fillStyle = '#202020';
-          // This erases the color behind and around the square, because it
-          // didn't we will get a contiouns stroke
-          context.fillRect(0, 0, 320, 180);
-          // This keeps the player stroking the canvas
-      
-          // i don't want both to be red
-          context.fillStyle = '#ff0000';// layer color: ;
-          // makes a new square
-          context.beginPath();
-          // the dimessional of the player
-          context.rect(res[id].x, res[id].y, res[id].width, res[id].height);
-
-          context.fill()
-
-            // physics
-          
-              // velocity is 1.5 every frame
-              res[id].y_velocity += 0.4; // gravity of the canvas
-              res[id].x += res[id].x_velocity;
-              res[id].y += res[id].y_velocity;
-    
-              // friction -> slow gradually
-    
-              res[id].x_velocity *= 0.9;
-              res[id].y_velocity *= 0.9;
-    
-              // ground detection
-    
-              if ( res[id].y > 180 - 16 - 32 ) {
-    
-                  res[id].jumping = false;
-                  res[id].y = 180 - 16 - 32;
-    
-                  // once the res[id] hits the ground, your veclocity should stop
-                  // instantly
-                  res[id].y_velocity = 0;
-    
-              }
-         }
-
-        })
-
-        window.requestAnimationFrame(loop)
+      let Rectangle = function({ color } : { color: string }) {
+        return {
+          height: 32, width: 32, jumping: false,
+          x_velocity: 0, y_velocity: 0, x: Math.floor(Math.random() * ctx.canvas.width),
+          y: 0, color,
+        }
       }
 
-      window.requestAnimationFrame(loop)
+      fetch('/api/socket').finally(() => {
 
-    })
-  }, [])
+        const socket = io();
+
+        socket.emit('newClient', Rectangle({ color: '#ff0000' }));
+        socket.on('currentClients', ( clientsOnline: ServerClientDiction ) => setClis(clientsOnline) )
+
+      })
+
+
+      /* setArr(() => {
+        arr.forEach((ar) => {
+          ctx.beginPath();
+          // we have to give the canvas gray filling
+          ctx.rect(ar.x, ar.y, ar.width, ar.height);
+          // so blue is working now! just no input
+          ctx.fillStyle = ar.color;// layer color: ;
+          ctx.fill();
+        })
+        return arr
+      }) */
+
+    }
+
+  }, [ctx])
+
+
 
   return <div>
-    {cli}<br/>
-    <canvas></canvas>
+    {Object.keys(clis).length} Online<br/>
+    <canvas ref={canvasRef}/>
   </div>
-
 
 }
 
 export default Home
 
-
-/* 
-
-socket.on('clientsConnectedToServer', ( clientsState: setClientsState{ [key: string]: any } ) => {
-        console.log(clientsState)
-setClientsState        for( let id in connectedClients ) {
-          let clientsFound: { [key: string]: any } = {};
-          if( connectedClientsFromServer[id] === undefined && id !== socket.id ) {
-            connectedClientsFromServer[id] = new Rectangle();
-          }
-          clientsFound[id] = true;
-        }
-
-        for( let id in connectedClientsFromServer) {
-          if(!connectedClientsFromServer[id]) {
-            delete connectedClientsFromServer[id]
-          }
-        }
-
-        console.log(connectedClientsFromServer)
-      })
-*/
