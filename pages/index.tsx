@@ -7,95 +7,59 @@ import io from 'socket.io-client';
 import { USERS } from '../apollo_client/querys/users';
 import { Rectangle, ServerClientDiction } from '../typeDef/gameTypeDefs';
 
+const socket = io('http://localhost:1212');
 
 const Home: NextPage = () => {
 
-  const [ ctx, setCtx ] = useState<null | CanvasRenderingContext2D>(null);
-  const canvasRef = useRef<null | HTMLCanvasElement>(null);
+  const [ position, setPositons ] = useState({ x: 20, y: 20 });
+  const [ clis, setClis ] = ({ a: 0, b: 0 })
+  
 
-  const [ clis, setClis ] = useState<ServerClientDiction>({})
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [ ctx, setCtx ] = useState<null | CanvasRenderingContext2D>(null);
+
 
 
   useEffect(() => {
+
+    if(!canvasRef.current) return;
+    const renderContext = canvasRef.current.getContext('2d');
+
+    if(!renderContext) return;
+    setCtx(() => {
+      renderContext.fillRect(
+        position.x, position.y, 20, 20
+      )
+      return renderContext
+    })
     
-    if(canvasRef.current) {
-      
-      const renderContext = canvasRef.current.getContext('2d');
-
-      if(renderContext) setCtx(() => {
-        renderContext.canvas.height = 240;
-        renderContext.canvas.width = 320;
-        renderContext.fillStyle = '#3f3a4bf4';
-        renderContext.fillRect(0, 0, renderContext.canvas.width, renderContext.canvas.width);
-        return renderContext
-      })
-
-    }
-
-    if(ctx) {
-      
-      let Rectangle = function({ color } : { color: string }) {
-        return {
-          height: 32, width: 32, jumping: false,
-          x_velocity: 0, y_velocity: 0, x: Math.floor(Math.random() * ctx.canvas.width),
-          y: 0, color,
-        }
+    socket.on('position', data => {
+      // canvas will not rendering unless socket receives data
+      for( let i in clis ) {
+        renderContext.clearRect( 0, 0, 640, 480 )
+        renderContext.fillRect(
+          data.x, data.y, 20, 20
+        )
       }
+      setPositons(position)
+    
+    })
 
-      fetch('/api/socket').finally(() => {
-
-        const socket = io();
-
-        socket.emit('newClient', Rectangle({ color: '#ff0000' }));
-        socket.on('currentClients', ( clientsOnline: ServerClientDiction ) => setClis(clientsOnline) )
-
-        const loop = () => setTimeout(() => {
-          socket.emit('requestToUpdateClient');
-          socket.on('updateClient', ( res: ServerClientDiction ) => setClis(() => {
-
-            // produceral programming with the canvas api
-            // first clear the previous canvas image from component mount
-            ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-            // change the prop to be this color
-            ctx.fillStyle = '#514a83';
-            // then fill the rectangle
-            ctx.fillRect(0, 0, 320, 240)
-           
-            
-            for( let id in res ) {
-              // now producerally start a path / stroke
-              ctx.beginPath();
-              // defien the shape
-              ctx.rect(res[id].x, res[id].y, res[id].width, res[id].height);
-              // this is for lols
-              ctx.stroke();
-              // the background and then use methd fill
-              ctx.fillStyle = 'red'
-              ctx.fill();
-              
-            }
-            console.log(res)
-            return res
-          }))
-          loop()
-        }, 30) 
-        
-        loop()
-
-      })
-
-    }
+    window.addEventListener('keydown', (e) => {
+      socket.emit('move', e.keyCode)
+    })
 
   }, [ctx])
 
-
-
   return <div>
-    {Object.keys(clis).length} Online<br/>
-    <canvas ref={canvasRef}/>
+
+    hello
+    <canvas ref={canvasRef} width="640"
+      height="480"
+      style={{ border: "1px solid black" }}
+    ></canvas>
   </div>
 
 }
 
 export default Home
-

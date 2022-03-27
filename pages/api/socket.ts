@@ -20,6 +20,7 @@ const ioHandler = (req: NextApiRequest, res: any) => {
 
             socket.on('newClient',  ( clientData: Rectangle ) => {
                 clients[socket.id] = clientData;
+                console.log(clients)
                 io.emit('currentClients', clients)
             });
 
