@@ -10,7 +10,15 @@ import { Rectangle, ServerClientDiction } from '../typeDef/gameTypeDefs';
 const socket = io('http://localhost:1212');
 
 const Home: NextPage = () => {
+ 
+  const renderCount = useRef(0);
 
+  const [ pos, setPos ] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    renderCount.current = renderCount.current + 1
+    console.log(renderCount.current)
+  })
 
   const [ clis, setClis ] = useState({ a: 0, b: 0 })
   const [ id, setId ] = useState('')
@@ -23,15 +31,14 @@ const Home: NextPage = () => {
 
 
   useEffect(() => {
-    const controller = () => {
-      socket.emit('move', id)
-    }
+    const mouse = ( e: MouseEvent ) => socket.emit('move', { id: id, x: e.clientX, y: e.clientY });
 
-     window.addEventListener('keydown', controller)
+      window.addEventListener('mousemove', mouse)
 
-    return () => {
-      window.removeEventListener('keydown', controller)
-    }
+      return () => {
+        window.removeEventListener('mousemove', mouse)
+      }
+
   })
 
   useEffect(() => {
@@ -40,15 +47,10 @@ const Home: NextPage = () => {
     const renderContext = canvasRef.current.getContext('2d');
 
     if(!renderContext) return;
-    setCtx(() => {
-/*       renderContext.fillRect(
-        position.x, position.y, 20, 20
-      ) */
-      return renderContext
-    })
+    setCtx(renderContext)
 
     socket.emit('newClient', { color: 'red', x: Math.floor(Math.random() * 200), y: 200 })
-    socket.on('registerId', data => setId(data))
+    socket.on('registerId', clientId => setId(clientId))
     socket.on('position', data => {
       renderContext.clearRect( 0, 0, 640, 480 )
       for( let i in data ) {
@@ -60,11 +62,6 @@ const Home: NextPage = () => {
       console.log(data)
     })
 
-
-    window.addEventListener('keydown', (e) => {
-      socket.emit('move', id)
-    })
-
   }, [ctx])
 
   return <div>
@@ -74,6 +71,9 @@ const Home: NextPage = () => {
       height="480"
       style={{ border: "1px solid black" }}
     ></canvas>
+    <br/>
+    position( x: { pos.x }, y: { pos.y } )
+    
   </div>
 
 }
