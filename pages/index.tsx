@@ -11,14 +11,30 @@ const socket = io('http://localhost:1212');
 
 const Home: NextPage = () => {
 
-  const [ position, setPositons ] = useState({ x: 20, y: 20 });
-  const [ clis, setClis ] = ({ a: 0, b: 0 })
+
+  const [ clis, setClis ] = useState({ a: 0, b: 0 })
+  const [ id, setId ] = useState('')
+
+  console.log(id)
   
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [ ctx, setCtx ] = useState<null | CanvasRenderingContext2D>(null);
 
 
+  useEffect(() => {
+    const controller = () => {
+      socket.emit('move', id)
+    }
+
+     window.addEventListener('keydown', (e) => {
+      controller()
+    })
+
+    return () => {
+      window.removeEventListener('keydown', controller)
+    }
+  })
 
   useEffect(() => {
 
@@ -27,26 +43,28 @@ const Home: NextPage = () => {
 
     if(!renderContext) return;
     setCtx(() => {
-      renderContext.fillRect(
+/*       renderContext.fillRect(
         position.x, position.y, 20, 20
-      )
+      ) */
       return renderContext
     })
-    
+
+    socket.emit('newClient', { color: 'red', x: Math.floor(Math.random() * 200), y: 200 })
+    socket.on('registerId', data => setId(data))
     socket.on('position', data => {
-      // canvas will not rendering unless socket receives data
-      for( let i in clis ) {
-        renderContext.clearRect( 0, 0, 640, 480 )
+      renderContext.clearRect( 0, 0, 640, 480 )
+      for( let i in data ) {
         renderContext.fillRect(
-          data.x, data.y, 20, 20
+          data[i].x, data[i].y, 20, 20
         )
       }
-      setPositons(position)
-    
+      setClis( data )
+      console.log(data)
     })
 
+
     window.addEventListener('keydown', (e) => {
-      socket.emit('move', e.keyCode)
+      socket.emit('move', id)
     })
 
   }, [ctx])
