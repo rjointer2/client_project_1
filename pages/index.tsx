@@ -27,9 +27,7 @@ const Home: NextPage = () => {
       socket.emit('move', id)
     }
 
-     window.addEventListener('keydown', (e) => {
-      controller()
-    })
+     window.addEventListener('keydown', controller)
 
     return () => {
       window.removeEventListener('keydown', controller)
