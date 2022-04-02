@@ -11,44 +11,20 @@ const socket = io('http://localhost:1212');
 
 const Home: NextPage = () => {
 
-  class Vector {
-    x: number;
-    y: number;
-    constructor( x: number , y: number ) {
-      this.x =  x
-      this.y =  y
-    }
-
-    add( v: Vector ) {
-      return new Vector( this.x+v.x, this.y+v.y )
-    }
-
-    subtract ( v: Vector ) {
-      return new Vector( this.x-v.x, this.y-v.y )
-    }
-
-    mag() {
-      return Math.sqrt( this.x**2 + this.y**2 )
-    }
-
-    mult( n: number ) {
-      return new Vector( this.x*n, this.y*n )
-    } 
- 
-
-  }
- 
   const renderCount = useRef(0);
 
   useEffect(() => {
     renderCount.current = renderCount.current + 1
-    console.log(renderCount.current)
   })
 
-  const [ clis, setClis ] = useState({})
+  const [ clis, setClis ] = useState<{ [index: string]: {
+    x: number, y: number, host: boolean, 
+    height: number, width: number,  
+    dx: number, dy: number, speed: number,
+    hold: boolean
+  }  }>({})
   const [ id, setId ] = useState('')
 
-  console.log(id)
   
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -56,12 +32,26 @@ const Home: NextPage = () => {
 
 
   useEffect(() => {
-    const mouse = ( e: MouseEvent ) => socket.emit('move', { id: id, x: e.clientX, y: e.clientY });
 
-      window.addEventListener('mousemove', mouse)
+    const controller = ( e: MouseEvent ) => {
+      if(!clis[id]) return;
+      socket.emit('move', { id: id, x: e.clientX, y: e.clientY, hold: false });
+    }
+
+    const holdEgg = ( e: KeyboardEvent  ) => {
+      console.log( e.key === ' ' )
+      let bool = e.key === ' ';
+      if(!clis[id]) return;
+      console.log(bool)
+      socket.emit('move', { id: id, x: clis[id].x, y: clis[id].y, hold: true })
+    }
+
+      window.addEventListener('mousemove', controller);
+      window.addEventListener('keydown', holdEgg)
 
       return () => {
-        window.removeEventListener('mousemove', mouse)
+        window.removeEventListener('mousemove', controller)
+        window.removeEventListener('keydown', holdEgg)
       }
 
   })
@@ -87,19 +77,18 @@ const Home: NextPage = () => {
 
         renderContext.beginPath();
         renderContext.moveTo(data[i].x, data[i].y)
-        renderContext.lineTo( data[i].x - data[i].dx * 5, data[i].y )
+        renderContext.lineTo( data[i].x + data[i].dx * -5, data[i].y )
         renderContext.strokeStyle = "red";
         renderContext.stroke();
 
         renderContext.beginPath();
         renderContext.moveTo(data[i].x, data[i].y)
-        renderContext.lineTo( data[i].x, data[i].y - data[i].dy * 5 )
+        renderContext.lineTo( data[i].x, data[i].y + data[i].dy * -5 )
         renderContext.strokeStyle = "blue";
         renderContext.stroke();
 
       }
       setClis( data )
-      console.log(data[id])
     })
 
   }, [ctx])
