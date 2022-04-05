@@ -2,6 +2,7 @@
 import { Dispatch, MutableRefObject, SetStateAction, useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { client } from "../typeDef/gameTypeDefs";
+import vectorDirectionUI from "./useCanvasMethods/vectorDirectionUI";
 
 export default function useCanvas( 
     canvasRef: MutableRefObject<HTMLCanvasElement | null>,
@@ -27,21 +28,8 @@ export default function useCanvas(
     
           for( let i in data ) {
     
-            renderContext.fillRect(
-              data[i].x - 10, data[i].y - 10, 20, 20
-            )
-    
-            renderContext.beginPath();
-            renderContext.moveTo(data[i].x, data[i].y)
-            renderContext.lineTo( data[i].x + data[i].dx * -5, data[i].y )
-            renderContext.strokeStyle = "red";
-            renderContext.stroke();
-    
-            renderContext.beginPath();
-            renderContext.moveTo(data[i].x, data[i].y)
-            renderContext.lineTo( data[i].x, data[i].y + data[i].dy * -5 )
-            renderContext.strokeStyle = "blue";
-            renderContext.stroke();
+            renderContext.fillRect( data[i].x - 10, data[i].y - 10, 20, 20 )
+            vectorDirectionUI( renderContext, data[i] )
     
           }
           setClients( data )
