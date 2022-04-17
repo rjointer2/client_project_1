@@ -27,7 +27,7 @@ const Home: NextPage = () => {
 
 
   useControllerHook( clis, id, socket, setClis );
-  useCanvas( canvasRef, setCtx, socket, setId, setClis, ctx );
+  useCanvas( canvasRef, setCtx, socket, setId, setClis, ctx, clis, id );
 
   return <div>
 

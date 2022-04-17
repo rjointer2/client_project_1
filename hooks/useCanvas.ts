@@ -10,7 +10,9 @@ export default function useCanvas(
     socket: Socket,
     setId: Dispatch<SetStateAction<string>>,
     setClients:  Dispatch<SetStateAction<client>>,
-    context: CanvasRenderingContext2D | null
+    context: CanvasRenderingContext2D | null,
+    clis: client,
+    id: string
 ) {
 
     useEffect(() => {
@@ -20,21 +22,28 @@ export default function useCanvas(
     
         if(!renderContext) return;
         setCanvas(renderContext)
+
     
-        socket.emit('newClient', { color: 'red', x: 320, y: 240, host: false, dx: 0, dy: 0 })
+        socket.emit('newClient', { color: 'red', x: 30, y: 30, host: false, dx: 0, dy: 0 })
         socket.on('registerId', clientId => setId(clientId))
         socket.on('position', data => {
           renderContext.clearRect( 0, 0, 640, 480 )
     
           for( let i in data ) {
     
-            renderContext.fillRect( data[i].x - 10, data[i].y - 10, 20, 20 )
-            vectorDirectionUI( renderContext, data[i] )
+            renderContext.fillRect( data[i].x, data[i].y, 20, 20 )
+            
     
           }
+
+          
           setClients( data )
         })
+
+        return () => {
+            
+        }
     
-      }, [context])
+      }, [context, id])
 
 }

@@ -16,28 +16,27 @@ export default function useControllerHook(
 
         const emitDirectionsKeyDown = ( e: KeyboardEvent ) => {
             map[ e.key ] = true;
-            socket.emit('move', { id: id, direction: map, hold: false });
+            console.log(e.key)
+            socket.emit('move', { id: id, direction: map });
         }
 
         const emitDirectionsKeyUp = ( e: KeyboardEvent ) => {
             map[ e.key ] = false
-            socket.emit('move', { id: id, direction: map, hold: false });
+            socket.emit('move', { id: id, direction: map });
         }
 
         const holdEgg = ( e: KeyboardEvent ) => {
-            if( e.key === 'Shift' ) {
-                map[ 'Shift' ] = true
-                socket.emit('move', { id: id, direction: map, hold: true });
-            }
+            if( e.key === 'q' ) socket.emit('holdEgg', { id: id, direction: map, hold: map['q'] = true });
         }
 
         const releaseEgg = ( e: KeyboardEvent ) => {
-            if( map['Shift'] ) {
-                map[ 'Shift' ] = false
-                socket.emit('move', { id: id, direction: map, hold: false  });
-            }
+            if( e.key === 'q' ) socket.emit('holdEgg', { id: id, direction: map, hold: map['q'] = false });
         }
 
+        const aimEgg = ( e: MouseEvent ) => {
+            if( !map['q'] ) return;
+            socket.emit('aimEgg', { id: id, mx: e.clientX, my: e.clientY - 20 })
+        }
 
 
 
@@ -47,6 +46,8 @@ export default function useControllerHook(
         window.addEventListener('keydown', holdEgg);
         window.addEventListener('keyup', releaseEgg);
 
+        window.addEventListener('mousemove', aimEgg)
+
 
         return () => {
 
@@ -55,6 +56,8 @@ export default function useControllerHook(
 
             window.removeEventListener('keydown', holdEgg);
             window.removeEventListener('keyup', releaseEgg);
+
+            window.removeEventListener('mousemove', aimEgg)
         }
     
     })
