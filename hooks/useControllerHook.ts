@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { client } from "../typeDef/gameTypeDefs";
 
-let map: { [index: KeyboardEvent["key"]]: boolean } = {};
+let map: any = {}
 
 export default function useControllerHook( 
     clis: client, id: string, 
@@ -15,6 +15,7 @@ export default function useControllerHook(
     useEffect(() => {
 
         const emitDirectionsKeyDown = ( e: KeyboardEvent ) => {
+
             map[ e.key ] = true;
             console.log(e.key)
             socket.emit('move', { id: id, direction: map });
@@ -26,16 +27,16 @@ export default function useControllerHook(
         }
 
         const holdEgg = ( e: KeyboardEvent ) => {
-            if( e.key === 'q' ) socket.emit('holdEgg', { id: id, direction: map, hold: map['q'] = true });
+            if( e.key === 'q' ) socket.emit('holdMagicBall', { id: id, direction: map, hold: map['q'] = true });
         }
 
         const releaseEgg = ( e: KeyboardEvent ) => {
-            if( e.key === 'q' ) socket.emit('holdEgg', { id: id, direction: map, hold: map['q'] = false });
+            if( e.key === 'q' ) socket.emit('holdMagicBall', { id: id, direction: map, hold: map['q'] = false });
         }
 
         const aimEgg = ( e: MouseEvent ) => {
             if( !map['q'] ) return;
-            socket.emit('aimEgg', { id: id, mx: e.clientX, my: e.clientY - 20 })
+            socket.emit('aimMagicBall', { id: id, mx: e.clientX - 40, my: e.clientY })
         }
 
 
@@ -59,7 +60,19 @@ export default function useControllerHook(
 
             window.removeEventListener('mousemove', aimEgg)
         }
-    
+
+       
     })
 
 }   
+
+
+
+
+/* 
+
+ 
+    
+
+
+*/
