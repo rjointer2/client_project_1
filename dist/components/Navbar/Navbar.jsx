@@ -16,6 +16,7 @@ function Navbar() {
                 Else
             </div>
         </div>
+        <MenuBarStyles_1.Menu />
     </MenuBarStyles_1.BarContainer>);
 }
 exports.default = Navbar;

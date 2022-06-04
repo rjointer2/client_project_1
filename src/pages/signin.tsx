@@ -11,6 +11,7 @@ import { me } from "../@apollo_client/querys/userQuery";
 import client from "../@apollo_client/configs/client";
 import cache from "../@apollo_client/configs/cache";
 import Navbar from "../components/Navbar/Navbar";
+import { FormContainer } from "../styled_componenets/FormStyles";
 
 
 
@@ -37,6 +38,29 @@ const SignIn: NextPage = () => {
     return (
       <div>
         <Navbar />
+        <FormContainer>
+          <div className="Group">
+              <label>Username</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Password</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Confirm Password</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Email</label>
+              <input />
+          </div>
+          <div className="Button">
+            <button>
+             Submit
+            </button> 
+          </div>
+        </FormContainer>
       </div>
     )
   
