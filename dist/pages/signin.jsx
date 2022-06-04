@@ -17,6 +17,7 @@ const client_1 = require("@apollo/client");
 const userMutation_1 = require("../@apollo_client/mutations/userMutation");
 const react_1 = require("react");
 const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
+const FormStyles_1 = require("../styled_componenets/FormStyles");
 const SignIn = () => {
     const [signIn] = (0, client_1.useMutation)(userMutation_1.SIGNIN);
     (0, react_1.useEffect)(() => {
@@ -33,6 +34,29 @@ const SignIn = () => {
     }, []);
     return (<div>
         <Navbar_1.default />
+        <FormStyles_1.FormContainer>
+          <div className="Group">
+              <label>Username</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Password</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Confirm Password</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Email</label>
+              <input />
+          </div>
+          <div className="Button">
+            <button>
+             Submit
+            </button> 
+          </div>
+        </FormStyles_1.FormContainer>
       </div>);
 };
 exports.default = SignIn;

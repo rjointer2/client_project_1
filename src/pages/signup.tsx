@@ -1,21 +1,30 @@
 
 import { NextPage } from "next"
 import Link from "next/link"
+import Navbar from "../components/Navbar/Navbar"
+import { FormContainer } from "../styled_componenets/FormStyles"
 
 
 const SignUp: NextPage = () => {
 
     return (
       <div>
-        <form>
-          <label>Username</label>
-          <input value={""} name="username" onChange={() => {}}/>
-          <label>Password</label>
-          <input value={""} name="password" onChange={() => {}} />
-          <Link href="/signin">
-            <a>Have a Account? Sign In Now!</a>
-          </Link>
-        </form>
+        <Navbar />
+        <FormContainer>
+        <div className="Group">
+              <label>Username</label>
+              <input />
+          </div>
+          <div className="Group">
+              <label>Password</label>
+              <input />
+          </div>
+          <div className="Button">
+            <button>
+             Submit
+            </button> 
+          </div>
+        </FormContainer>
       </div>
     )
   
