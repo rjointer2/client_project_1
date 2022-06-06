@@ -19,13 +19,14 @@ exports.FormContainer = styled_components_1.default.form `
 
         label {
             margin: 10px 0 10px 0;
-            font-size: 20px;
+            font-size: 25px;
+            width: 250px;
         }
     }
 
     .Button {
         position: relative;
-        right: 40px;
+        right: 70px;
         margin: 10px 0 10px 0;
     }
 

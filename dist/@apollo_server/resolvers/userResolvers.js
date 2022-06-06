@@ -15,21 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.me = exports.createUser = exports.signIn = void 0;
 const models_1 = __importDefault(require("../MongoDB/models"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const apollo_server_express_1 = require("apollo-server-express");
 const signIn = (_, args, middleware) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield models_1.default.findOne({ username: args.username });
-    if (!user)
-        return {
-            message: "No User Found when queryed at log in..."
-        };
-    if (yield bcrypt_1.default.compare(args.password, user.password)) {
-        user.password = "";
-        middleware.authorize(user);
-        return {
-            message: "User successfully logged in, user creditinals are being authenicated..."
-        };
+    let message = "Failed To Sign In! :[";
+    if (!user) {
+        throw new apollo_server_express_1.ApolloError(`No User was found when queryed for ${args.username}...`);
     }
+    if (!(yield bcrypt_1.default.compare(args.password, user.password))) {
+        throw new apollo_server_express_1.ApolloError('Incorrect Password Used When Signing In...');
+    }
+    user.password = "";
+    middleware.authorize(user);
+    message = "Sign In Successfully!";
     return {
-        message: "Incorrected password used..."
+        message
     };
 });
 exports.signIn = signIn;

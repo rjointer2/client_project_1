@@ -1,11 +1,9 @@
 
 import next from 'next';
-import http from 'http';
+
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import MongoStore from 'connect-mongo';
-
-import cookieParser from "cookie-parser";
 
 import session from 'express-session';
 
@@ -16,6 +14,7 @@ import connectDb from './connectDB';
 import database_configs from './configs';
 
 
+
 const dev = process.env.NODE_ENV !== 'development';
 
 const app = next({ dev });
@@ -23,10 +22,12 @@ const handle = app.getRequestHandler();
 
 const _port = 3000;
 
+
+
 const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
-    context
+    context,
 })
 
 
@@ -35,7 +36,6 @@ app.prepare().then( async () => {
     const expressLib = express();
 
     expressLib.get('*', ( req, res ) => {
-        console.log('k')
         return handle(req, res)
     })
 
@@ -62,7 +62,5 @@ app.prepare().then( async () => {
         console.log('server started!')
         console.log(apolloServer.graphqlPath)
     })
-
-
     
 })

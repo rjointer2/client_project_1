@@ -5,3 +5,15 @@
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+@media all and (min-width: 480px) {
+
+    form {
+        padding: 60px;
+        margin: 0 auto;
+        max-width: 320px;
+    }
+
+
+    
+}

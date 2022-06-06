@@ -29,12 +29,11 @@ const _port = 3000;
 const apolloServer = new apollo_server_express_1.ApolloServer({
     typeDefs: typeDefs_1.default,
     resolvers: combineResolvers_1.default,
-    context: context_1.default
+    context: context_1.default,
 });
 app.prepare().then(() => __awaiter(void 0, void 0, void 0, function* () {
     const expressLib = (0, express_1.default)();
     expressLib.get('*', (req, res) => {
-        console.log('k');
         return handle(req, res);
     });
     expressLib.use((0, express_session_1.default)({

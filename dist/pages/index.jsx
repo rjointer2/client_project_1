@@ -3,15 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@apollo/client");
 const socket_io_client_1 = __importDefault(require("socket.io-client"));
-const userQuery_1 = require("../@apollo_client/querys/userQuery");
+const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
 const socket = (0, socket_io_client_1.default)('http://localhost:1212');
 const Home = () => {
-    const { data } = (0, client_1.useQuery)(userQuery_1.me);
-    console.log("test", data);
+    //const  {data} = useQuery(me)
+    //console.log("test", data)
     return (<div>
-      Home Page
+      <Navbar_1.default />
     </div>);
 };
 exports.default = Home;

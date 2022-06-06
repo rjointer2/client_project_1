@@ -3,9 +3,10 @@ import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
 
-    type Token {
-        message: String
-        data: User
+
+    type AuthResponse {
+        message: String 
+        succesful: Boolean
     }
 
     type User {
@@ -20,8 +21,8 @@ const typeDefs = gql`
     }
 
     type Mutation {
-        signIn ( username: String!, password: String! ): Token
-        createUser ( username: String!, password: String!, email: String! ): Token
+        signIn ( username: String!, password: String! ): AuthResponse
+        createUser ( username: String!, password: String!, email: String! ): AuthResponse
     }
 
 `;

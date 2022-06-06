@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import io, { Socket } from 'socket.io-client';
 import { me } from '../@apollo_client/querys/userQuery';
+import Navbar from '../components/Navbar/Navbar';
 
 import useCanvas from '../hooks/useCanvas';
 import useControllerHook from '../hooks/useControllerHook';
@@ -17,13 +18,14 @@ const socket = io('http://localhost:1212');
 const Home: NextPage = () => {
 
 
-  const  {data} = useQuery(me)
 
-  console.log("test", data)
+  //const  {data} = useQuery(me)
+
+  //console.log("test", data)
 
   return (
     <div>
-      Home Page
+      <Navbar />
     </div>
   )
 

@@ -1,87 +1,37 @@
 
-// next
-import { NextPage } from "next"
-import Link from "next/link"
+// react 
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react"
 
 // apollo client
-import { gql, useMutation, useQuery } from '@apollo/client';
-import { SIGNIN, ME_DATA } from "../@apollo_client/mutations/userMutation";
-import { useEffect } from "react";
-import { me } from "../@apollo_client/querys/userQuery";
-import client from "../@apollo_client/configs/client";
-import cache from "../@apollo_client/configs/cache";
-import Navbar from "../components/Navbar/Navbar";
-import { FormContainer } from "../styled_componenets/FormStyles";
+import { useMutation } from "@apollo/client"
+import { NextPage } from "next"
+import { SIGNIN } from "../@apollo_client/mutations/userMutation"
+
+// components
+import Navbar from "../components/Navbar/Navbar"
+
+// next
+import Link from "next/link"
+import SignIn from "../components/SignIn/SignIn"
 
 
 
-const SignIn: NextPage = () => {
 
-
-  const [ signIn ] = useMutation(SIGNIN);
+const SignUp: NextPage = () => {
 
   useEffect(() => {
-    ( async () => {
-      const i = await signIn({
-        variables: {
-          "username": "test1",
-          "password": "test1",
-          "email": "test1@gmail.com",
-  
-        }
-      })
-      console.log(i.data)
-    })()
+    console.log('rerendered!')
+  })
 
-  }, [])
 
-    return (
-      <div>
-        <Navbar />
-        <FormContainer>
-          <div className="Group">
-              <label>Username</label>
-              <input />
-          </div>
-          <div className="Group">
-              <label>Password</label>
-              <input />
-          </div>
-          <div className="Group">
-              <label>Confirm Password</label>
-              <input />
-          </div>
-          <div className="Group">
-              <label>Email</label>
-              <input />
-          </div>
-          <div className="Button">
-            <button>
-             Submit
-            </button> 
-          </div>
-        </FormContainer>
-      </div>
-    )
+  return (
+    <div>
+      <Navbar />
+      <SignIn />
+    </div>
+  )
   
 }
   
-export default SignIn
+export default SignUp
 
-
-/* 
-<form>
-          <label>Username</label>
-          <input value={""} name="username" onChange={() => {}} />
-          <label>Password</label>
-          <input value={""} name="password" onChange={() => {}} />
-          <label>Confirm Password</label>
-          <input value={""} name="confirmpassword" onChange={() => {}} />
-          <label>Email</label>
-          <input value={""} name="password" onChange={() => {}} />
-          <Link href="/signup">
-            <a>Don't Have a Account? Sign Up Today!</a>
-          </Link>
-        </form>
-
-*/

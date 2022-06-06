@@ -9,13 +9,17 @@ import { GlobalState } from '../hooks/globalStateHook';
 
 // styles
 import "../styles/index.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { SSRProvider } from 'react-bootstrap';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <ApolloProvider client={client}>
+  return <SSRProvider>
+    <ApolloProvider client={client}>
     <GlobalState>
       <Component {...pageProps} />
     </GlobalState>
   </ApolloProvider>
+  </SSRProvider>
 }
 export default MyApp

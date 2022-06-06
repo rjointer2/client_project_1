@@ -6,41 +6,42 @@ import { middleware } from "../middleware/context";
 import { ApolloError } from "apollo-server-express";
 
 
-type Token = {
-    message: string
+type AuthResponse = {
+    message: string,
 }
 
 export const signIn = async ( 
     _: never, 
     args: { username: string, password: string }, 
     middleware: middleware 
-): Promise<Token> => {
+): Promise<AuthResponse> => {
 
     const user = await User.findOne({ username: args.username });
 
-    if( !user ) return {
-        message: "No User Found when queryed at log in..."
+    let message = "Failed To Sign In! :[";
+
+    if( !user ) {
+        throw new ApolloError(`No User was found when queryed for ${args.username}...`)
+    }
+    
+
+    if( !await bcrypt.compare( args.password, user.password ) ) {
+        throw new ApolloError('Incorrect Password Used When Signing In...')
     }
 
-    if( await bcrypt.compare( args.password, user.password ) ) {
-
-        user.password = "";
-        middleware.authorize(user)
-
-        return {
-            message: "User successfully logged in, user creditinals are being authenicated..."
-        }
-    }
+    user.password = "";
+    middleware.authorize(user)
+    message = "Sign In Successfully!";
 
     return {
-        message: "Incorrected password used..."
+        message
     }
 
 }
 
 export const createUser = async (  
     _: never, args: { username: string, password: string, email: string }, middleware: middleware
-): Promise<Token> => {
+): Promise<AuthResponse> => {
 
     args.password = await bcrypt.hash(args.password, 10)
     

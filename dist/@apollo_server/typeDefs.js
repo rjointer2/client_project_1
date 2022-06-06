@@ -3,9 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_server_express_1 = require("apollo-server-express");
 const typeDefs = (0, apollo_server_express_1.gql) `
 
-    type Token {
-        message: String
-        data: User
+
+    type AuthResponse {
+        message: String 
+        succesful: Boolean
     }
 
     type User {
@@ -20,8 +21,8 @@ const typeDefs = (0, apollo_server_express_1.gql) `
     }
 
     type Mutation {
-        signIn ( username: String!, password: String! ): Token
-        createUser ( username: String!, password: String!, email: String! ): Token
+        signIn ( username: String!, password: String! ): AuthResponse
+        createUser ( username: String!, password: String!, email: String! ): AuthResponse
     }
 
 `;

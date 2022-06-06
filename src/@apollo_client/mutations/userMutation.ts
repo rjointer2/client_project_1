@@ -11,13 +11,17 @@ export const ME_DATA = gql`
 
 
 export const SIGNIN = gql`
-    ${ME_DATA}
-    mutation signIn ($username: String!, $password: String!) {
+    mutation signIn($username: String!, $password: String!) {
         signIn (username: $username, password: $password) {
             message
-            data {
-                ...data
-            }
+        }
+    }
+`;
+
+export const SIGNUP = gql`
+    mutation signUp($username: String!, $password: String!, $email: String!) {
+        createUser(username: $username, password: $password, email: $email) {
+            message
         }
     }
 `;
