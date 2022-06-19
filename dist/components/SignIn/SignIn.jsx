@@ -31,46 +31,81 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 // react
 const client_1 = require("@apollo/client");
 const react_1 = __importStar(require("react"));
 // styles
 const react_bootstrap_1 = require("react-bootstrap");
+// apollo client
 const userMutation_1 = require("../../@apollo_client/mutations/userMutation");
+const Spinner_1 = __importDefault(require("../Spinner/Spinner"));
 function SignIn() {
-    const [state, setState] = (0, react_1.useState)({});
+    const [validation, setValidation] = (0, react_1.useState)({
+        isInValid: false, isValid: false,
+    });
+    const [form, setForm] = (0, react_1.useState)({});
     const eventHandler = (e) => {
         // this function will fire twice on the browser on the dom load
         // if the user has the password fill in the input fields
         const { name, value } = e.currentTarget;
-        setState(s => { return Object.assign(Object.assign({}, s), { [name]: value }); });
+        setForm(s => { return Object.assign(Object.assign({}, s), { [name]: value }); });
     };
-    const [signIn] = (0, client_1.useMutation)(userMutation_1.SIGNIN);
+    const [signIn, { data, loading, error }] = (0, client_1.useMutation)(userMutation_1.SIGNIN);
     const submitHandler = (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
-        const result = yield signIn({ variables: {
-                "username": state.username,
-                "password": state.password,
-            } });
-        console.log(result.context);
+        try {
+            yield signIn({ variables: {
+                    "username": form.username,
+                    "password": form.password,
+                } });
+            setValidation(s => {
+                return Object.assign(Object.assign({}, s), { isInValid: false, isValid: true });
+            });
+            window.location.replace('/');
+        }
+        catch (_a) {
+            setValidation(s => {
+                return Object.assign(Object.assign({}, s), { isInValid: true, isValid: false });
+            });
+        }
     });
-    return (<react_bootstrap_1.Form onSubmit={submitHandler}>
-            <react_bootstrap_1.Form.Group className="mb-3" controlId="username">
-            <react_bootstrap_1.Form.Label>Username</react_bootstrap_1.Form.Label>
-            <react_bootstrap_1.Form.Control type="name" placeholder="Please Enter Email" name="username" onChange={(e) => eventHandler(e)}/>
-            <react_bootstrap_1.Form.Text className="text-muted">
-                
-            </react_bootstrap_1.Form.Text>
-            </react_bootstrap_1.Form.Group>
+    (0, react_1.useEffect)(() => {
+        if (validation.isInValid === false)
+            return;
+        setValidation(s => {
+            return Object.assign(Object.assign({}, s), { isInValid: false, isValid: false });
+        });
+    }, [form]);
+    return (<div style={{ paddingTop: '30vh' }}>
 
-            <react_bootstrap_1.Form.Group className="mb-3" controlId="password">
-            <react_bootstrap_1.Form.Label>Password</react_bootstrap_1.Form.Label>
-            <react_bootstrap_1.Form.Control type="password" placeholder="Password" name="password" onChange={(e) => eventHandler(e)}/>
-            </react_bootstrap_1.Form.Group>
-            <react_bootstrap_1.Form.Group className="mb-3" controlId="formBasicCheckbox">
-            </react_bootstrap_1.Form.Group>
-            <react_bootstrap_1.Button variant="primary" type="submit">Submit</react_bootstrap_1.Button>
-        </react_bootstrap_1.Form>);
+            <react_bootstrap_1.Form onSubmit={submitHandler}>
+
+                <react_bootstrap_1.Form.Group className="mb-3" controlId="username">
+                    <react_bootstrap_1.Form.Label>Username</react_bootstrap_1.Form.Label>
+                    <react_bootstrap_1.Form.Control type="name" placeholder="Please Enter Email" isInvalid={validation.isInValid} isValid={validation.isValid} name="username" onChange={(e) => eventHandler(e)}/>
+                </react_bootstrap_1.Form.Group>
+
+                <react_bootstrap_1.Form.Group className="mb-3" controlId="password">
+                    <react_bootstrap_1.Form.Label>Password</react_bootstrap_1.Form.Label>
+                    <react_bootstrap_1.Form.Control type="password" placeholder="Password" isInvalid={validation.isInValid} isValid={validation.isValid} name="password" onChange={(e) => eventHandler(e)}/>
+                </react_bootstrap_1.Form.Group>
+
+                <div style={{ display: 'flex', flexDirection: "column" }}>
+                    <br />
+                    <react_bootstrap_1.Button variant="primary" type="submit" style={{ display: 'flex', justifyContent: 'center' }}>
+                        {loading ? <Spinner_1.default /> : 'Submit'}
+                    </react_bootstrap_1.Button>
+                    <br />
+                    <react_bootstrap_1.Form.Text className="text-muted" style={{ color: 'red' }}>
+                        {error ? error.message : ''}
+                        {data ? data.signIn.message : ''}
+                    </react_bootstrap_1.Form.Text>
+                </div>
+            </react_bootstrap_1.Form>
+        </div>);
 }
 exports.default = SignIn;

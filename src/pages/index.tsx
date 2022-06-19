@@ -1,17 +1,25 @@
 
-import { useQuery } from '@apollo/client';
+
+// next 
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+
+// react
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
+// socket 
 import io, { Socket } from 'socket.io-client';
-import { me } from '../@apollo_client/querys/userQuery';
+
 import Navbar from '../components/Navbar/Navbar';
 
-import useCanvas from '../hooks/useCanvas';
+
+// hooks
+import useCanvas from '../hooks/useCanvas1';
 import useControllerHook from '../hooks/useControllerHook';
+
 import { client } from '../typeDef/gameTypeDefs';
+import FindOrCreateRoom from '../components/FindOrCreateRoom/FindOrCreateRoom';
 
 const socket = io('http://localhost:1212');
 
@@ -19,13 +27,10 @@ const Home: NextPage = () => {
 
 
 
-  //const  {data} = useQuery(me)
-
-  //console.log("test", data)
-
   return (
     <div>
       <Navbar />
+      <FindOrCreateRoom />
     </div>
   )
 

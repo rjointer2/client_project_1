@@ -1,0 +1,19 @@
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.scrollMessages {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 260px;
+}
+
+.wrapText {
+    max-width: 500px;
+    word-wrap: break-word;
+
+}

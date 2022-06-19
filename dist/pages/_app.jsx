@@ -10,11 +10,17 @@ const globalStateHook_1 = require("../hooks/globalStateHook");
 // styles
 require("../styles/index.css");
 require("bootstrap/dist/css/bootstrap.min.css");
+const react_bootstrap_1 = require("react-bootstrap");
+const useSocket_1 = require("../hooks/useSocket");
 function MyApp({ Component, pageProps }) {
-    return <client_1.ApolloProvider client={client_2.default}>
-    <globalStateHook_1.GlobalState>
-      <Component {...pageProps}/>
-    </globalStateHook_1.GlobalState>
-  </client_1.ApolloProvider>;
+    return <react_bootstrap_1.SSRProvider>
+  <useSocket_1.SocketContext.Provider value={useSocket_1.io}>
+    <client_1.ApolloProvider client={client_2.default}>
+      <globalStateHook_1.GlobalState>
+        <Component {...pageProps}/>
+      </globalStateHook_1.GlobalState>
+    </client_1.ApolloProvider>
+  </useSocket_1.SocketContext.Provider>
+    </react_bootstrap_1.SSRProvider>;
 }
 exports.default = MyApp;

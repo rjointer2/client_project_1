@@ -34,25 +34,38 @@ const signIn = (_, args, middleware) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.signIn = signIn;
 const createUser = (_, args, middleware) => __awaiter(void 0, void 0, void 0, function* () {
-    args.password = yield bcrypt_1.default.hash(args.password, 10);
-    return yield models_1.default.create(args).then(user => {
-        middleware.authorize(user.id);
+    for (let input in args) {
+        if (args[input] === '')
+            throw new apollo_server_express_1.ApolloError(`All fields aren't fill out, please fill out fields to create a account`);
+    }
+    if (args.password !== args.confirmPassword)
+        throw new apollo_server_express_1.ApolloError('The passwords entered did not match, please try again...');
+    if (args.username.length > 5)
+        throw new apollo_server_express_1.ApolloError('Username must be at least 6 characters long');
+    try {
+        const _hashPasswored = yield bcrypt_1.default.hash(args.password, 12);
+        args.password = _hashPasswored;
+        const user = yield models_1.default.create(args);
+        middleware.authorize(user);
         return {
-            message: "User Created Successfully...",
+            message: 'Successfully Register Account!'
         };
-    }).catch((err) => {
-        let message = "Errors when creating User,";
-        if (err.message.includes('password'))
-            message += " Password doesn't filfull requirements, ";
-        if (err.message.includes('username'))
-            message += " Username already exist, ";
-        if (err.message.includes('email'))
-            message += " Email has beem used already, ";
-        return {
-            message,
-            data: null
-        };
-    });
+    }
+    catch (err) {
+        console.log(err);
+        if (!err)
+            throw new apollo_server_express_1.ApolloError('no error thrown, bad server handle made..');
+        if (!(typeof err === 'object'))
+            throw new apollo_server_express_1.ApolloError('unknown error thrown, server failed to evaluate issue...');
+        if (err.hasOwnProperty('message')) {
+            let error = err;
+            if (error.message.includes("username_1"))
+                throw new apollo_server_express_1.ApolloError(`Username: ${args.username} has been used already...`);
+            if (error.message.includes("email_1"))
+                throw new apollo_server_express_1.ApolloError(`Email: ${args.email} has been used already...`);
+            throw new apollo_server_express_1.ApolloError(error.message);
+        }
+    }
 });
 exports.createUser = createUser;
 const me = (_, __, middleware) => __awaiter(void 0, void 0, void 0, function* () {

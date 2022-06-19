@@ -17,8 +17,8 @@ exports.SIGNIN = (0, client_1.gql) `
     }
 `;
 exports.SIGNUP = (0, client_1.gql) `
-    mutation signUp($username: String!, $password: String!, $email: String!) {
-        createUser(username: $username, password: $password, email: $email) {
+    mutation createUser ($username: String!, $password: String!, $confirmPassword: String!, $email: String!) {
+        createUser (username: $username, password: $password, confirmPassword: $confirmPassword, email: $email) {
             message
         }
     }

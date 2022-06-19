@@ -11,15 +11,18 @@ import { GlobalState } from '../hooks/globalStateHook';
 import "../styles/index.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SSRProvider } from 'react-bootstrap';
+import { io, SocketContext } from '../hooks/useSocket';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <SSRProvider>
+ return <SSRProvider>
+  <SocketContext.Provider value={io} >
     <ApolloProvider client={client}>
-    <GlobalState>
-      <Component {...pageProps} />
-    </GlobalState>
-  </ApolloProvider>
-  </SSRProvider>
-}
+      <GlobalState>
+        <Component {...pageProps} />
+      </GlobalState>
+    </ApolloProvider>
+  </SocketContext.Provider>
+</SSRProvider>
+ }
 export default MyApp

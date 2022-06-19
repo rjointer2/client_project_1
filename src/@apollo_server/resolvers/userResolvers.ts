@@ -39,30 +39,53 @@ export const signIn = async (
 
 }
 
+type signUpArgs = { 
+    [key: string]: string
+    username: string, password: string, confirmPassword: string, email: string 
+}
+
 export const createUser = async (  
-    _: never, args: { username: string, password: string, email: string }, middleware: middleware
-): Promise<AuthResponse> => {
+    _: never, args: signUpArgs, middleware: middleware
+) => {
 
-    args.password = await bcrypt.hash(args.password, 10)
-    
-    return await User.create(args).then( user => {
-        middleware.authorize(user.id)
+    for ( let input in args ) {
+        if( args[input] === '' ) throw new ApolloError(`All fields aren't fill out, please fill out fields to create a account`);
+    }
+
+    if( args.password !== args.confirmPassword ) throw new ApolloError('The passwords entered did not match, please try again...');
+
+    if( args.username.length > 5 ) throw new ApolloError('Username must be at least 6 characters long');
+
+    try {
+
+        const _hashPasswored = await bcrypt.hash( args.password, 12 );
+        args.password = _hashPasswored
+
+        const user = await User.create(args);
+        middleware.authorize(user)
+
         return {
-            message: "User Created Successfully...",
+            message: 'Successfully Register Account!'
         }
-    }).catch(( err: ApolloError ) => {
+    } catch ( err ) {
 
-        let message = "Errors when creating User,"
+        console.log(err)
 
-        if( err.message.includes('password') ) message += " Password doesn't filfull requirements, ";
-        if( err.message.includes('username') ) message += " Username already exist, ";
-        if( err.message.includes('email') ) message += " Email has beem used already, ";
+        if( !err ) throw new ApolloError('no error thrown, bad server handle made..')
 
-        return {
-            message,
-            data: null
+        if( !(typeof err === 'object') ) throw new ApolloError('unknown error thrown, server failed to evaluate issue...')
+
+        if( err.hasOwnProperty('message') ) {
+            let error = err as { message: string }
+
+            if( error.message.includes("username_1") ) throw new ApolloError(`Username: ${args.username} has been used already...`)
+            if( error.message.includes("email_1") ) throw new ApolloError(`Email: ${args.email} has been used already...`)
+
+            throw new ApolloError(error.message)
         }
-    })
+
+    }
+
 }
 
 export const me = async (  

@@ -22,7 +22,7 @@ const typeDefs = (0, apollo_server_express_1.gql) `
 
     type Mutation {
         signIn ( username: String!, password: String! ): AuthResponse
-        createUser ( username: String!, password: String!, email: String! ): AuthResponse
+        createUser ( username: String!, password: String!, confirmPassword: String! email: String! ): AuthResponse
     }
 
 `;
