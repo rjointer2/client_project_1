@@ -3,18 +3,23 @@
 import Link from 'next/link';
 
 // react
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Container, Nav, NavDropdown } from 'react-bootstrap';
 
 // styles
 import Navnar from 'react-bootstrap/Navbar';
 import { useGlobalState } from '../../hooks/globalStateHook';
 
+// hooks
+import { setUserResolver } from '../../@apollo_client/resolvers/userResolvers';
+import cache from '../../@apollo_client/configs/cache';
+
 
 export default function Navbar() {
 
-  const { state, dispatch } = useGlobalState();
-  const { user } = state;
+  const { dispatch } = useGlobalState();
+  dispatch()
+
 
   return (
     <Navnar bg="light" expand="lg" >
@@ -26,16 +31,11 @@ export default function Navbar() {
         }} >
           <Nav className="me-auto">
             <Nav.Link href="/signin" style={{ width: '80px' }} >
-              { user ? 'Sign Out' : 'Sign in' }
+
             </Nav.Link>
-            { user ? null : 
-              <Nav.Link href="/signup" style={{ width: '80px' }} >
-                Sign Up
-              </Nav.Link> 
-            }
+
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Find A Room</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">Create A Room</NavDropdown.Item>
+  
               <NavDropdown.Item href="#action/3.3">View Ranking</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">View Wiki</NavDropdown.Item>
             </NavDropdown>

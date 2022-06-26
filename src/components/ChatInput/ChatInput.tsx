@@ -8,7 +8,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap';
 
 // hooks
-import { $$disconnectFromRoom, $$redirect, $$updateRooms, useSocket } from '../../hooks/useSocket';
+import { $$sendChat, $$updateRooms, useSocket } from '../../hooks/useSocket';
 
 
 type FormControlEvent = any
@@ -25,11 +25,7 @@ export default function ChatInput() {
 
     useEffect(() => {
 
-        socket.on('roomCreated', ( state ) => {
-            console.log(state)
-        })
-
-        socket.on('CHAT', ( res: any ) => {
+        socket.on($$sendChat, ( res: any ) => {
             console.log(res)
         })
         
@@ -42,7 +38,7 @@ export default function ChatInput() {
 
     const submitHandler = ( e: ChangeEvent<FormControlEvent> ) => {
         e.preventDefault();
-        socket.emit($$updateRooms, id, 'CHAT', message)
+        socket.emit<typeof $$updateRooms>($$updateRooms, id, $$sendChat, message)
     }
     
 

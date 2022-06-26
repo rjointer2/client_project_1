@@ -3,12 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// socket 
-const socket_io_client_1 = __importDefault(require("socket.io-client"));
 const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
+// components
 const FindOrCreateRoom_1 = __importDefault(require("../components/FindOrCreateRoom/FindOrCreateRoom"));
-const socket = (0, socket_io_client_1.default)('http://localhost:1212');
+const cache_1 = __importDefault(require("../@apollo_client/configs/cache"));
+const userQuery_1 = require("../@apollo_client/querys/userQuery");
 const Home = () => {
+    const i = cache_1.default.readQuery({
+        query: userQuery_1.ME,
+    });
+    console.log(i);
     return (<div>
       <Navbar_1.default />
       <FindOrCreateRoom_1.default />

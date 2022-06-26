@@ -92,10 +92,8 @@ export const me = async (
     _: never, __: any, middleware: middleware
 ) => {
 
-    middleware.authenticate()
-    return {
-        username: ""
-    }
+    const user = middleware.authenticate()
+    return user
 
 
 

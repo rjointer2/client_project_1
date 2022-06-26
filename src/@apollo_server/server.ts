@@ -24,6 +24,8 @@ const _port = 3000;
 
 
 
+
+
 const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
@@ -38,6 +40,7 @@ app.prepare().then( async () => {
     expressLib.get('*', ( req, res ) => {
         return handle(req, res)
     })
+    
 
     expressLib.use(session({ 
         secret: process.env.SECRET as string, 

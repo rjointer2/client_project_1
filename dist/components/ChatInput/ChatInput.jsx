@@ -36,10 +36,7 @@ function ChatInput() {
     const { id } = router.query;
     const [message, setMessage] = (0, react_1.useState)('');
     (0, react_1.useEffect)(() => {
-        socket.on('roomCreated', (state) => {
-            console.log(state);
-        });
-        socket.on('CHAT', (res) => {
+        socket.on(useSocket_1.$$sendChat, (res) => {
             console.log(res);
         });
     }, []);
@@ -49,11 +46,11 @@ function ChatInput() {
     };
     const submitHandler = (e) => {
         e.preventDefault();
-        socket.emit(useSocket_1.$$updateRooms, id, 'CHAT', message);
+        socket.emit(useSocket_1.$$updateRooms, id, useSocket_1.$$sendChat, message);
     };
     return (<div>
             <div>
-                <react_bootstrap_1.Form onSubmit={submitHandler}>
+                <react_bootstrap_1.Form onSubmit={submitHandler} style={{ padding: '20px' }}>
         
                     <react_bootstrap_1.Form.Group className="mb-3">
                         <react_bootstrap_1.Form.Label>Send Message</react_bootstrap_1.Form.Label>

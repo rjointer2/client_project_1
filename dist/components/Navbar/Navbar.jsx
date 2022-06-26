@@ -8,10 +8,10 @@ const react_1 = __importDefault(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 // styles
 const Navbar_1 = __importDefault(require("react-bootstrap/Navbar"));
-const globalStateHook_1 = require("../../hooks/globalStateHook");
+// hooks
+const userResolvers_1 = require("../../@apollo_client/resolvers/userResolvers");
 function Navbar() {
-    const { state, dispatch } = (0, globalStateHook_1.useGlobalState)();
-    const { user } = state;
+    const { data, loading, error } = (0, userResolvers_1.setUserResolver)();
     return (<Navbar_1.default bg="light" expand="lg">
       <react_bootstrap_1.Container>
         <Navbar_1.default.Brand href="#home">Logo</Navbar_1.default.Brand>
@@ -21,15 +21,11 @@ function Navbar() {
         }}>
           <react_bootstrap_1.Nav className="me-auto">
             <react_bootstrap_1.Nav.Link href="/signin" style={{ width: '80px' }}>
-              {user ? 'Sign Out' : 'Sign in'}
+
             </react_bootstrap_1.Nav.Link>
-            {user ? null :
-            <react_bootstrap_1.Nav.Link href="/signup" style={{ width: '80px' }}>
-                Sign Up
-              </react_bootstrap_1.Nav.Link>}
+
             <react_bootstrap_1.NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <react_bootstrap_1.NavDropdown.Item href="#action/3.1">Find A Room</react_bootstrap_1.NavDropdown.Item>
-              <react_bootstrap_1.NavDropdown.Item href="#action/3.2">Create A Room</react_bootstrap_1.NavDropdown.Item>
+  
               <react_bootstrap_1.NavDropdown.Item href="#action/3.3">View Ranking</react_bootstrap_1.NavDropdown.Item>
               <react_bootstrap_1.NavDropdown.Item href="#action/3.3">View Wiki</react_bootstrap_1.NavDropdown.Item>
             </react_bootstrap_1.NavDropdown>

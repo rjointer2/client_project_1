@@ -11,7 +11,6 @@ import { SIGNIN } from "../@apollo_client/mutations/userMutation"
 import Navbar from "../components/Navbar/Navbar"
 
 // next
-import Link from "next/link"
 import SignIn from "../components/SignIn/SignIn"
 
 
@@ -19,10 +18,11 @@ import SignIn from "../components/SignIn/SignIn"
 
 const SignUp: NextPage = () => {
 
-  useEffect(() => {
-    console.log('rerendered!')
-  })
+  
 
+  useEffect(() => {
+
+  })
 
   return (
     <div>

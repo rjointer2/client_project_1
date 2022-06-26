@@ -34,6 +34,7 @@ const Canvas_1 = __importDefault(require("../../components/Canvas/Canvas"));
 const ChatBox_1 = __importDefault(require("../../components/ChatBox/ChatBox"));
 const ChatInput_1 = __importDefault(require("../../components/ChatInput/ChatInput"));
 const Navbar_1 = __importDefault(require("../../components/Navbar/Navbar"));
+const PlayerQueue_1 = __importDefault(require("../../components/PlayerQueue/PlayerQueue"));
 // hooks
 const useSocket_1 = require("../../hooks/useSocket");
 function Room() {
@@ -51,9 +52,15 @@ function Room() {
             <Navbar_1.default />
             <div style={{
             display: 'flex', alignItems: 'center', flexDirection: 'column',
-            marginTop: '5vh',
+            marginTop: '2.5vh',
         }}>
-            <Canvas_1.default />
+            <div style={{
+            display: 'flex', flexDirection: 'row',
+            marginTop: '2.5vh',
+        }}> 
+                <PlayerQueue_1.default />
+                <Canvas_1.default />
+            </div>
             <ChatBox_1.default />
             <ChatInput_1.default />
         </div>

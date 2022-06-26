@@ -7,10 +7,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = require("react");
 // components
 const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
+// next
 const SignIn_1 = __importDefault(require("../components/SignIn/SignIn"));
 const SignUp = () => {
     (0, react_1.useEffect)(() => {
-        console.log('rerendered!');
     });
     return (<div>
       <Navbar_1.default />

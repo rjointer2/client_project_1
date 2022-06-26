@@ -13,19 +13,22 @@ import io, { Socket } from 'socket.io-client';
 
 import Navbar from '../components/Navbar/Navbar';
 
-
-// hooks
-import useCanvas from '../hooks/useCanvas1';
-import useControllerHook from '../hooks/useControllerHook';
-
-import { client } from '../typeDef/gameTypeDefs';
+// components
 import FindOrCreateRoom from '../components/FindOrCreateRoom/FindOrCreateRoom';
 
-const socket = io('http://localhost:1212');
+// hooks
+import useTrackRender from '../hooks/useTrackRender';
+import cache from '../@apollo_client/configs/cache';
+import { ME } from '../@apollo_client/querys/userQuery';
+
 
 const Home: NextPage = () => {
 
+  const i = cache.readQuery({
+    query: ME,
+});
 
+console.log(i)
 
   return (
     <div>

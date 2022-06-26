@@ -9,6 +9,7 @@ import Canvas from '../../components/Canvas/Canvas';
 import ChatBox from '../../components/ChatBox/ChatBox';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Navbar from '../../components/Navbar/Navbar';
+import PlayerQueue from '../../components/PlayerQueue/PlayerQueue';
 
 // hooks
 import { $$disconnectFromRoom, $$redirect, $$updateRooms, useSocket } from '../../hooks/useSocket';
@@ -41,7 +42,13 @@ export default function Room() {
             display: 'flex', alignItems: 'center', flexDirection: 'column',
             marginTop: '2.5vh',
         }} >
-            <Canvas />
+            <div style={{ 
+                display: 'flex', flexDirection: 'row',
+                marginTop: '2.5vh',
+            }} > 
+                <PlayerQueue />
+                <Canvas />
+            </div>
             <ChatBox />
             <ChatInput />
         </div>

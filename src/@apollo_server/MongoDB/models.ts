@@ -1,6 +1,5 @@
 
 import { Schema, model } from 'mongoose';
-import bcrypt from 'bcrypt';
 
 export interface UserSchema {
     id: string

@@ -69,9 +69,7 @@ const createUser = (_, args, middleware) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.createUser = createUser;
 const me = (_, __, middleware) => __awaiter(void 0, void 0, void 0, function* () {
-    middleware.authenticate();
-    return {
-        username: ""
-    };
+    const user = middleware.authenticate();
+    return user;
 });
 exports.me = me;
