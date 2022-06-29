@@ -11,9 +11,13 @@ const Navbar_1 = __importDefault(require("react-bootstrap/Navbar"));
 // hooks
 const userResolvers_1 = require("../../@apollo_client/resolvers/userResolvers");
 function Navbar() {
-    const { data, loading, error } = (0, userResolvers_1.setUserResolver)();
+    const { setState } = (0, userResolvers_1.useCache)();
+    console.log();
     return (<Navbar_1.default bg="light" expand="lg">
       <react_bootstrap_1.Container>
+        <button onClick={() => setState((p) => p + 1)}>
+          click
+        </button>
         <Navbar_1.default.Brand href="#home">Logo</Navbar_1.default.Brand>
         <Navbar_1.default.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar_1.default.Collapse id="basic-navbar-nav" style={{

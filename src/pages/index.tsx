@@ -20,16 +20,11 @@ import FindOrCreateRoom from '../components/FindOrCreateRoom/FindOrCreateRoom';
 import useTrackRender from '../hooks/useTrackRender';
 import cache from '../@apollo_client/configs/cache';
 import { ME } from '../@apollo_client/querys/userQuery';
+import { useCache } from '../@apollo_client/resolvers/userResolvers';
 
 
 const Home: NextPage = () => {
-
-  const i = cache.readQuery({
-    query: ME,
-});
-
-console.log(i)
-
+  
   return (
     <div>
       <Navbar />

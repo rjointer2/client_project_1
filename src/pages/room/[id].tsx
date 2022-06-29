@@ -1,15 +1,23 @@
 
 // next
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router'
 
 // react 
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap';
-import Canvas from '../../components/Canvas/Canvas';
+
+
+// components
 import ChatBox from '../../components/ChatBox/ChatBox';
 import ChatInput from '../../components/ChatInput/ChatInput';
 import Navbar from '../../components/Navbar/Navbar';
 import PlayerQueue from '../../components/PlayerQueue/PlayerQueue';
+
+const ClientSideCanvasComponent = dynamic(() => 
+    import('../../components/Canvas/Canvas'),
+    { ssr: false }
+)
 
 // hooks
 import { $$disconnectFromRoom, $$redirect, $$updateRooms, useSocket } from '../../hooks/useSocket';
@@ -19,39 +27,21 @@ type FormControlEvent = any
 
 export default function Room() {
 
-    const socket = useSocket();
-    const router = useRouter();
-    const { id } = router.query;
-
-
-    useEffect(() => { 
-        if( id ) socket.emit('joinRoom', id); 
-        socket.on($$redirect, ( res: string ) => {
-            router.replace(`/${res}`)
-        })
-    }, [id]);
-
-    
-
-    
-
     return(
         <div>
             <Navbar />
-            <div style={{ 
-            display: 'flex', alignItems: 'center', flexDirection: 'column',
-            marginTop: '2.5vh',
-        }} >
-            <div style={{ 
-                display: 'flex', flexDirection: 'row',
-                marginTop: '2.5vh',
-            }} > 
-                <PlayerQueue />
-                <Canvas />
+
+            <div > 
+                <ClientSideCanvasComponent />
             </div>
-            <ChatBox />
-            <ChatInput />
-        </div>
+            <div style={{ display: 'flex', flexDirection: 'row', }} >
+                <div>
+                    <ChatBox />
+                    <ChatInput />
+                </div>
+                <PlayerQueue />
+            </div>
+
         </div>
     )
 }

@@ -5,7 +5,6 @@ import type { AppProps } from 'next/app';
 // apollo client 
 import { ApolloProvider } from '@apollo/client';
 import client from '../@apollo_client/configs/client';
-import { GlobalState } from '../hooks/globalStateHook';
 
 // styles
 import "../styles/index.css";
@@ -18,9 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
  return <SSRProvider>
   <SocketContext.Provider value={io} >
     <ApolloProvider client={client}>
-      <GlobalState>
-        <Component {...pageProps} />
-      </GlobalState>
+      <Component {...pageProps} />
     </ApolloProvider>
   </SocketContext.Provider>
 </SSRProvider>

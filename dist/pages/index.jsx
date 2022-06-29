@@ -6,13 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
 // components
 const FindOrCreateRoom_1 = __importDefault(require("../components/FindOrCreateRoom/FindOrCreateRoom"));
-const cache_1 = __importDefault(require("../@apollo_client/configs/cache"));
-const userQuery_1 = require("../@apollo_client/querys/userQuery");
+const userResolvers_1 = require("../@apollo_client/resolvers/userResolvers");
 const Home = () => {
-    const i = cache_1.default.readQuery({
-        query: userQuery_1.ME,
-    });
-    console.log(i);
+    const { state } = (0, userResolvers_1.useCache)();
+    console.log(state);
     return (<div>
       <Navbar_1.default />
       <FindOrCreateRoom_1.default />

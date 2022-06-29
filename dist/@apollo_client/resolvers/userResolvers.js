@@ -1,12 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setUserResolver = void 0;
-const client_1 = require("@apollo/client");
-const globalStateHook_1 = require("../../hooks/globalStateHook");
-const userQuery_1 = require("../querys/userQuery");
-const setUserResolver = () => {
-    const { data, loading, error } = (0, client_1.useQuery)(userQuery_1.ME);
-    const { dispatch } = (0, globalStateHook_1.useGlobalState)();
-    return { data, loading, error };
+exports.useCache = void 0;
+const react_1 = require("react");
+const useCache = () => {
+    const [state, setState] = (0, react_1.useState)(0);
+    /* cache.writeQuery({
+        data: data,
+        query: ME
+    })
+
+    const me = cache.readQuery({
+        query: ME
+    })
+
+    console.log(me) */
+    return { setState, state };
 };
-exports.setUserResolver = setUserResolver;
+exports.useCache = useCache;
+/*     const { data, loading, error } = useQuery<UserSchema>(ME);
+   
+
+    const [ obj, setUser ] = useState<(undefined); */ 

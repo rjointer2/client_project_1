@@ -8,18 +8,15 @@ import { Container, Nav, NavDropdown } from 'react-bootstrap';
 
 // styles
 import Navnar from 'react-bootstrap/Navbar';
-import { useGlobalState } from '../../hooks/globalStateHook';
+
 
 // hooks
-import { setUserResolver } from '../../@apollo_client/resolvers/userResolvers';
-import cache from '../../@apollo_client/configs/cache';
+import {useUser} from '../../hooks/useUser';
 
 
 export default function Navbar() {
 
-  const { dispatch } = useGlobalState();
-  dispatch()
-
+  const { data, loading, error } = useUser();
 
   return (
     <Navnar bg="light" expand="lg" >
@@ -31,13 +28,22 @@ export default function Navbar() {
         }} >
           <Nav className="me-auto">
             <Nav.Link href="/signin" style={{ width: '80px' }} >
-
+              Sign In
+            </Nav.Link>
+            <Nav.Link href="/signup" style={{ width: '80px' }} >
+              Sign Up
             </Nav.Link>
 
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-  
               <NavDropdown.Item href="#action/3.3">View Ranking</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.3">View Wiki</NavDropdown.Item>
+              {
+                data?.me ? <>
+                  <NavDropdown.Item href="#action/3.3">Create Room</NavDropdown.Item>
+                  <NavDropdown.Item href="#action/3.3">Find Room</NavDropdown.Item>
+                </> :
+                null
+              }
             </NavDropdown>
         </Nav>
       </Navnar.Collapse>

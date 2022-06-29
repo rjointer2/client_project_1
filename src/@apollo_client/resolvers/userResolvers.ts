@@ -1,18 +1,31 @@
 
-import { Resolver, useQuery } from "@apollo/client";
+import { ApolloError, Resolver, useQuery } from "@apollo/client";
+import { useState } from "react";
 import { UserSchema } from "../../@apollo_server/MongoDB/models";
-import { useGlobalState } from "../../hooks/globalStateHook";
+
 import cache from "../configs/cache";
 import { ME } from "../querys/userQuery";
 
-export const setUserResolver: Resolver = () => {
-    
-    const { data, loading, error } = useQuery<UserSchema>(ME);
+export const useCache: Resolver = () => {
 
-    const { dispatch } = useGlobalState();
+    const [ state, setState ] = useState(0)
 
+    /* cache.writeQuery({
+        data: data,
+        query: ME
+    })
 
+    const me = cache.readQuery({
+        query: ME
+    })
 
-    return { data, loading, error }
+    console.log(me) */
+    return { setState, state }
 
 }
+
+
+/*     const { data, loading, error } = useQuery<UserSchema>(ME);
+   
+
+    const [ obj, setUser ] = useState<(undefined); */

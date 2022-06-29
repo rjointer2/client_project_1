@@ -1,10 +1,12 @@
 
 // react
+import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import React, { ChangeEvent, Dispatch, useState } from 'react'
 
 // styles
 import { Button, Form } from 'react-bootstrap'
+import { ME } from '../../@apollo_client/querys/userQuery';
 import { $$createRoom, $$joinRoom, $$roomCreated, useSocket } from '../../hooks/useSocket'
 
 type FormControlEvent = any
@@ -12,7 +14,8 @@ type FormControlEvent = any
 export default function FindOrCreateRoom() {
 
     const socket = useSocket();
-    const router = useRouter()
+    const router = useRouter();
+
 
     const [ localState, setLocalState ] = useState({
       roomIsInValid: false, roomIsValid: false,
@@ -24,7 +27,8 @@ export default function FindOrCreateRoom() {
     const submitHandler = ( e: ChangeEvent<FormControlEvent> ) => {
       e.preventDefault()
       socket.emit( $$createRoom, localState.roomName );
-      socket.on( $$roomCreated, ( isRoomCreated: boolean ) => {
+
+      const handleRequestFromSocketServer = ( isRoomCreated: boolean ) => {
         if( isRoomCreated ) {
             router.replace(`/room/${localState.roomName}`)
         }
@@ -34,7 +38,13 @@ export default function FindOrCreateRoom() {
             message: 'Room name taken already...'
             }
         })
-      })
+      }
+
+      socket.on( $$roomCreated, handleRequestFromSocketServer);
+
+      return () => {
+        socket.off($$roomCreated, handleRequestFromSocketServer)
+      }
       
     }
   

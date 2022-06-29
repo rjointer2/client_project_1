@@ -1,6 +1,7 @@
 
 
 // next
+import { FragmentsOnCompositeTypesRule } from 'graphql';
 import { useRouter } from 'next/router'
 
 // react 
@@ -9,6 +10,7 @@ import { Button, Form } from 'react-bootstrap';
 
 // hooks
 import { $$sendChat, $$updateRooms, useSocket } from '../../hooks/useSocket';
+import { useCacheUser } from '../../hooks/useUser';
 
 
 type FormControlEvent = any
@@ -16,28 +18,32 @@ type FormControlEvent = any
 export default function ChatInput() {
 
     const socket = useSocket();
-    const router = useRouter()
+    const router = useRouter();
+    const { me, loading, error } = useCacheUser()
     const { id } = router.query;
 
-    const [ message, setMessage ] = useState('')
+    console.log(me)
     
 
-
-    useEffect(() => {
-
-        socket.on($$sendChat, ( res: any ) => {
-            console.log(res)
-        })
-        
-    }, [])
+    const [ message, setMessage ] = useState({})
+    
 
     const eventHandler = ( e: ChangeEvent<FormControlEvent> ) => {
         const { name, value } = e.currentTarget;
-        setMessage(value);
+        setMessage( p => {
+            return {
+                ...p,
+                [name]: value
+            }
+        });
     }
 
     const submitHandler = ( e: ChangeEvent<FormControlEvent> ) => {
+
+
+
         e.preventDefault();
+        console.log(message)
         socket.emit<typeof $$updateRooms>($$updateRooms, id, $$sendChat, message)
     }
     
@@ -51,7 +57,7 @@ export default function ChatInput() {
                         <Form.Label>Send Message</Form.Label>
                         <Form.Control type="name" placeholder="Say Something!" 
 
-                            name="roomName"
+                            name={ me ? me.username : 'User_Not_Mounted' }
                             onChange={(e) => eventHandler(e as ChangeEvent<FormControlEvent>)}
                         />
                     </Form.Group>
@@ -61,7 +67,7 @@ export default function ChatInput() {
                     <div style={{ display: 'flex', flexDirection: "column" }} >
                         <br/>
                         <Button variant="primary" type="submit" style={{ display: 'flex', justifyContent: 'center' }} >
-                            Create Room
+                            Send Message
                         </Button>
                     </div>
                 </Form>

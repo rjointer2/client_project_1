@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // apollo client 
 const client_1 = require("@apollo/client");
 const client_2 = __importDefault(require("../@apollo_client/configs/client"));
-const globalStateHook_1 = require("../hooks/globalStateHook");
 // styles
 require("../styles/index.css");
 require("bootstrap/dist/css/bootstrap.min.css");
@@ -16,9 +15,7 @@ function MyApp({ Component, pageProps }) {
     return <react_bootstrap_1.SSRProvider>
   <useSocket_1.SocketContext.Provider value={useSocket_1.io}>
     <client_1.ApolloProvider client={client_2.default}>
-      <globalStateHook_1.GlobalState>
-        <Component {...pageProps}/>
-      </globalStateHook_1.GlobalState>
+      <Component {...pageProps}/>
     </client_1.ApolloProvider>
   </useSocket_1.SocketContext.Provider>
     </react_bootstrap_1.SSRProvider>;
