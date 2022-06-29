@@ -31,10 +31,15 @@ export default function Room() {
         <div>
             <Navbar />
 
-            <div > 
+            <div style={{ display: 'flex', justifyContent: 'center' }} > 
                 <ClientSideCanvasComponent />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', }} >
+            <div style={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                justifyContent: 'center', 
+                paddingTop: '10px', 
+            }} >
                 <div>
                     <ChatBox />
                     <ChatInput />

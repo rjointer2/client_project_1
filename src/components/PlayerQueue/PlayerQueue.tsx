@@ -1,9 +1,20 @@
 
+// nextjs
 import { useRouter } from 'next/router';
+
+// react
 import React, { useEffect, useState } from 'react'
+
+// styles 
+import { Alert, Button } from 'react-bootstrap';
+
+// mongo
 import { UserSchema } from '../../@apollo_server/MongoDB/models';
 
+// socket
 import { $$joinRoom, $$redirect, $$updatePlayerQueue, $$updateRooms, useSocket } from '../../hooks/useSocket'
+
+// hooks
 import { useCacheUser } from '../../hooks/useUser';
 
 export default function PlayerQueue() {
@@ -60,12 +71,15 @@ export default function PlayerQueue() {
 
   return (
     <div>
+      <Alert variant='info' >
+        Clients Connected - {clients.queue.length}
+      </Alert>
        {
            clients.queue.map(( value, index ) => {
-               return <div key={index}>
-                { value.username }
+               return <div key={index} style={{ padding: '5px' }} >
+                { value.username } <Button variant="primary"> Add Player </Button>
                </div>
-           })
+           }) 
        }
     </div>
   )

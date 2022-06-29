@@ -23,7 +23,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// react
 const router_1 = require("next/router");
 const react_1 = __importStar(require("react"));
 // styles
@@ -40,14 +39,18 @@ function FindOrCreateRoom() {
     const submitHandler = (e) => {
         e.preventDefault();
         socket.emit(useSocket_1.$$createRoom, localState.roomName);
-        socket.on(useSocket_1.$$roomCreated, (isRoomCreated) => {
+        const handleRequestFromSocketServer = (isRoomCreated) => {
             if (isRoomCreated) {
                 router.replace(`/room/${localState.roomName}`);
             }
             setLocalState(s => {
                 return Object.assign(Object.assign({}, s), { message: 'Room name taken already...' });
             });
-        });
+        };
+        socket.on(useSocket_1.$$roomCreated, handleRequestFromSocketServer);
+        return () => {
+            socket.off(useSocket_1.$$roomCreated, handleRequestFromSocketServer);
+        };
     };
     const eventHandler = (e) => {
         const { name, value } = e.currentTarget;

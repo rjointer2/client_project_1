@@ -8,6 +8,11 @@ const useCanvas_1 = __importDefault(require("../../hooks/useCanvas"));
 // styles
 function Canvas() {
     (0, useCanvas_1.default)();
-    return (<canvas />);
+    console.log(document);
+    return (<canvas style={{
+            height: '800px',
+            width: '800px',
+            backgroundColor: '#808080'
+        }}/>);
 }
 exports.default = Canvas;

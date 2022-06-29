@@ -23,29 +23,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// next
 const router_1 = require("next/router");
 // react 
 const react_1 = __importStar(require("react"));
 const react_bootstrap_1 = require("react-bootstrap");
 // hooks
 const useSocket_1 = require("../../hooks/useSocket");
+const useUser_1 = require("../../hooks/useUser");
 function ChatInput() {
     const socket = (0, useSocket_1.useSocket)();
     const router = (0, router_1.useRouter)();
+    const { me, loading, error } = (0, useUser_1.useCacheUser)();
     const { id } = router.query;
-    const [message, setMessage] = (0, react_1.useState)('');
-    (0, react_1.useEffect)(() => {
-        socket.on(useSocket_1.$$sendChat, (res) => {
-            console.log(res);
-        });
-    }, []);
+    console.log(me);
+    const [message, setMessage] = (0, react_1.useState)({});
     const eventHandler = (e) => {
         const { name, value } = e.currentTarget;
-        setMessage(value);
+        setMessage(p => {
+            return Object.assign(Object.assign({}, p), { [name]: value });
+        });
     };
     const submitHandler = (e) => {
         e.preventDefault();
+        console.log(message);
         socket.emit(useSocket_1.$$updateRooms, id, useSocket_1.$$sendChat, message);
     };
     return (<div>
@@ -54,7 +54,7 @@ function ChatInput() {
         
                     <react_bootstrap_1.Form.Group className="mb-3">
                         <react_bootstrap_1.Form.Label>Send Message</react_bootstrap_1.Form.Label>
-                        <react_bootstrap_1.Form.Control type="name" placeholder="Say Something!" name="roomName" onChange={(e) => eventHandler(e)}/>
+                        <react_bootstrap_1.Form.Control type="name" placeholder="Say Something!" name={me ? me.username : 'User_Not_Mounted'} onChange={(e) => eventHandler(e)}/>
                     </react_bootstrap_1.Form.Group>
         
         
@@ -62,7 +62,7 @@ function ChatInput() {
                     <div style={{ display: 'flex', flexDirection: "column" }}>
                         <br />
                         <react_bootstrap_1.Button variant="primary" type="submit" style={{ display: 'flex', justifyContent: 'center' }}>
-                            Create Room
+                            Send Message
                         </react_bootstrap_1.Button>
                     </div>
                 </react_bootstrap_1.Form>

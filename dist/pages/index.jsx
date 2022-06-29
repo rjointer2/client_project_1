@@ -6,10 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Navbar_1 = __importDefault(require("../components/Navbar/Navbar"));
 // components
 const FindOrCreateRoom_1 = __importDefault(require("../components/FindOrCreateRoom/FindOrCreateRoom"));
-const userResolvers_1 = require("../@apollo_client/resolvers/userResolvers");
 const Home = () => {
-    const { state } = (0, userResolvers_1.useCache)();
-    console.log(state);
     return (<div>
       <Navbar_1.default />
       <FindOrCreateRoom_1.default />

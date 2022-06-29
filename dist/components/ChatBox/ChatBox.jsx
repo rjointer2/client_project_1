@@ -34,16 +34,17 @@ function ChatBox() {
     const socket = (0, useSocket_1.useSocket)();
     const [messages, setMessages] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {
-        socket.on('CHAT', (res) => {
+        socket.on(useSocket_1.$$sendChat, (res) => {
             setMessages(p => [...p, res]);
         });
     }, []);
+    console.log(messages);
     return (<div className={ChatBox_module_css_1.default.container}>
             <react_bootstrap_1.ListGroup className={ChatBox_module_css_1.default.scrollMessages}>
-                {messages.map((value, index) => {
+                {messages.map((message, index) => {
             return <react_bootstrap_1.ListGroup.Item key={index} className="">
                         <div className={ChatBox_module_css_1.default.wrapText}>
-                        {`${Object.keys(value)[0]} said: ${Object.values(value)[0]}`}
+                            {`${Object.keys(message)[0]} said: ${Object.values(message)[0]}`}
                         </div>
                     </react_bootstrap_1.ListGroup.Item>;
         })}

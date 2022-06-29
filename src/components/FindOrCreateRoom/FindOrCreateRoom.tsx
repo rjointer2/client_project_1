@@ -8,6 +8,7 @@ import React, { ChangeEvent, Dispatch, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { ME } from '../../@apollo_client/querys/userQuery';
 import { $$createRoom, $$joinRoom, $$roomCreated, useSocket } from '../../hooks/useSocket'
+import { useCacheUser } from '../../hooks/useUser';
 
 type FormControlEvent = any
 
@@ -15,6 +16,8 @@ export default function FindOrCreateRoom() {
 
     const socket = useSocket();
     const router = useRouter();
+
+    const { me, loading, error } = useCacheUser();
 
 
     const [ localState, setLocalState ] = useState({
@@ -26,6 +29,17 @@ export default function FindOrCreateRoom() {
   
     const submitHandler = ( e: ChangeEvent<FormControlEvent> ) => {
       e.preventDefault()
+
+      if( me === null ) {
+        setLocalState( p => {
+          return {
+            ...p,
+            message: 'No user is logged in, you must be logged to join or create a room!'
+          }
+        })
+        return;
+      }
+
       socket.emit( $$createRoom, localState.roomName );
 
       const handleRequestFromSocketServer = ( isRoomCreated: boolean ) => {

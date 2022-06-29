@@ -27,43 +27,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // next
-const router_1 = require("next/router");
+const dynamic_1 = __importDefault(require("next/dynamic"));
 // react 
-const react_1 = __importStar(require("react"));
-const Canvas_1 = __importDefault(require("../../components/Canvas/Canvas"));
+const react_1 = __importDefault(require("react"));
+// components
 const ChatBox_1 = __importDefault(require("../../components/ChatBox/ChatBox"));
 const ChatInput_1 = __importDefault(require("../../components/ChatInput/ChatInput"));
 const Navbar_1 = __importDefault(require("../../components/Navbar/Navbar"));
 const PlayerQueue_1 = __importDefault(require("../../components/PlayerQueue/PlayerQueue"));
-// hooks
-const useSocket_1 = require("../../hooks/useSocket");
+const ClientSideCanvasComponent = (0, dynamic_1.default)(() => Promise.resolve().then(() => __importStar(require('../../components/Canvas/Canvas'))), { ssr: false });
 function Room() {
-    const socket = (0, useSocket_1.useSocket)();
-    const router = (0, router_1.useRouter)();
-    const { id } = router.query;
-    (0, react_1.useEffect)(() => {
-        if (id)
-            socket.emit('joinRoom', id);
-        socket.on(useSocket_1.$$redirect, (res) => {
-            router.replace(`/${res}`);
-        });
-    }, [id]);
     return (<div>
             <Navbar_1.default />
-            <div style={{
-            display: 'flex', alignItems: 'center', flexDirection: 'column',
-            marginTop: '2.5vh',
-        }}>
-            <div style={{
-            display: 'flex', flexDirection: 'row',
-            marginTop: '2.5vh',
-        }}> 
-                <PlayerQueue_1.default />
-                <Canvas_1.default />
+
+            <div style={{ display: 'flex', alignItems: 'center' }}> 
+                <ClientSideCanvasComponent />
             </div>
-            <ChatBox_1.default />
-            <ChatInput_1.default />
-        </div>
+            <div style={{ display: 'flex', flexDirection: 'row', }}>
+                <div>
+                    <ChatBox_1.default />
+                    <ChatInput_1.default />
+                </div>
+                <PlayerQueue_1.default />
+            </div>
+
         </div>);
 }
 exports.default = Room;
